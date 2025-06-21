@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-beta.0",
+    "material-symbols": "^0.31.8",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
