@@ -1,6 +1,7 @@
 "use client";
 
 import Card from "@/app/ui/card";
+import CategoryToggle from "@/app/ui/category-toggle";
 import QuestionLanguageToggle from "@/app/ui/question-language-toggle";
 import RoundButton from "@/app/ui/round-button";
 
@@ -11,6 +12,10 @@ export default function Question({ questionLanguage }: QuestionProps) {
         <div
             className="w-screen h-screen flex flex-col justify-center items-center bg-white"
         >
+            <div className="mb-16">
+                <CategoryToggle />
+            </div>
+
             <div className="mb-16">
                 <QuestionLanguageToggle />
             </div>

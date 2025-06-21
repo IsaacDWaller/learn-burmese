@@ -13,9 +13,9 @@ export default function QuestionLanguageToggle() {
     function onToggleChange(selectedQuestionLanguages: string[]) {
         if (!selectedQuestionLanguages.length) return;
 
-        const searchParams = new URLSearchParams();
-        searchParams.set("questionLanguage", selectedQuestionLanguages[0]);
-        replace(`${pathname}?${searchParams}`);
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set("questionLanguage", selectedQuestionLanguages[0]);
+        replace(`${pathname}?${newSearchParams}`);
     }
 
     return <ToggleGroup
@@ -38,5 +38,5 @@ export default function QuestionLanguageToggle() {
         >
             Burmese
         </Toggle>
-    </ToggleGroup>
+    </ToggleGroup>;
 }

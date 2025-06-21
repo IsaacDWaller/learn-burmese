@@ -1,0 +1,123 @@
+{
+    "units": [
+        {
+            "english": "zero",
+            "burmese": "thone nya"
+        },
+        {
+            "english": "one",
+            "burmese": "tit"
+        },
+        {
+            "english": "two",
+            "burmese": "nit"
+        },
+        {
+            "english": "three",
+            "burmese": "thone"
+        },
+        {
+            "english": "four",
+            "burmese": "lay"
+        },
+        {
+            "english": "five",
+            "burmese": "nga"
+        },
+        {
+            "english": "six",
+            "burmese": "chaut"
+        },
+        {
+            "english": "seven",
+            "burmese": "koon"
+        },
+        {
+            "english": "eight",
+            "burmese": "shit"
+        },
+        {
+            "english": "nine",
+            "burmese": "kouh"
+        },
+        {
+            "english": "ten",
+            "burmese": "tit seh"
+        },
+        {
+            "english": "eleven",
+            "burmese": "tit seh tit"
+        },
+        {
+            "english": "twelve",
+            "burmese": "tit seh nit"
+        },
+        {
+            "english": "thirteen",
+            "burmese": "tit seh thone"
+        },
+        {
+            "english": "fourteen",
+            "burmese": "tit seh lay"
+        },
+        {
+            "english": "fifteen",
+            "burmese": "tit seh nga"
+        },
+        {
+            "english": "sixteen",
+            "burmese": "tit seh chaut"
+        },
+        {
+            "english": "seventeen",
+            "burmese": "tit seh koon"
+        },
+        {
+            "english": "eighteen",
+            "burmese": "tit seh shit"
+        },
+        {
+            "english": "nineteen",
+            "burmese": "tit seh kouh"
+        }
+    ],
+    "tens": [
+        {
+            "english": "twenty",
+            "burmese": "nit seh"
+        },
+        {
+            "english": "thirty",
+            "burmese": "thone seh"
+        },
+        {
+            "english": "forty",
+            "burmese": "lay seh"
+        },
+        {
+            "english": "fifty",
+            "burmese": "nga seh"
+        },
+        {
+            "english": "sixty",
+            "burmese": "chaut seh"
+        },
+        {
+            "english": "seventy",
+            "burmese": "koon seh"
+        },
+        {
+            "english": "eighty",
+            "burmese": "shit seh"
+        },
+        {
+            "english": "ninety",
+            "burmese": "kouh seh"
+        }
+    ],
+    "hundred": "yarr",
+    "thousand": "thaune",
+    "ten thousand": "thoune",
+    "hundred thousand": "thaine",
+    "million": "thann"
+}
