@@ -1,6 +1,6 @@
 "use client";
 
-const categories = ["numbers", "colours"];
+import { getCategories } from "@/app/lib/quiz/data";
 
 interface CategoriesProps {
     selectedCategories: string[],
@@ -12,7 +12,7 @@ export default function Categories({
     onCategoryClick,
 }: CategoriesProps) {
     return <div className="flex gap-8">
-        {categories.map(category => {
+        {getCategories().map(category => {
             const enabled = selectedCategories.includes(category);
 
             return <button

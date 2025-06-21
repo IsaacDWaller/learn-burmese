@@ -2,7 +2,7 @@ interface RoundButtonProps {
     colour: string,
     symbol: string,
     fontSize: number,
-    onClick: () => void,
+    onClick?: () => void,
 };
 
 export default function RoundButton({
