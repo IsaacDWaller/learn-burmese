@@ -4,22 +4,24 @@ import { getQuestion } from "@/app/lib/quiz/data";
 import Card from "@/app/ui/quiz/card";
 import RoundButton from "@/app/ui/quiz/round-button";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-interface QuizProps { questionLanguage: string };
+interface QuizProps { categories: string[], questionLanguage: string };
 
-function getRandomCategory(categories: string[]) {
-    return categories[Math.floor(Math.random() * categories.length)];
-}
+export default function Quiz({ categories, questionLanguage }: QuizProps) {
+    const [question, setQuestion] = useState(getQuestion(categories));
+    const [language, setLanguage] = useState(questionLanguage);
 
-export default function Quiz({ questionLanguage }: QuizProps) {
-    const searchParams = useSearchParams();
-    const categories = searchParams.getAll("categories");
-    const [
-        question,
-        setQuestion,
-    ] = useState(getQuestion(getRandomCategory(categories)));
+    function handleCardClick() {
+        setLanguage((language: string) => {
+            return language === "english" ? "burmese" : "english"
+        });
+    }
+
+    function handleButtonClick() {
+        setQuestion(getQuestion(categories));
+        setLanguage(questionLanguage);
+    }
 
     return <div className="w-screen h-screen flex flex-col bg-white">
         <div
@@ -44,7 +46,8 @@ export default function Quiz({ questionLanguage }: QuizProps) {
                 <Card
                     english={question.english}
                     burmese={question.burmese}
-                    initialLanguage={questionLanguage}
+                    language={language}
+                    onClick={handleCardClick}
                 />
             </div>
 
@@ -53,14 +56,14 @@ export default function Quiz({ questionLanguage }: QuizProps) {
                     colour="red"
                     symbol="close"
                     fontSize={48}
-                    onClick={() => setQuestion(getQuestion(getRandomCategory(categories)))}
+                    onClick={handleButtonClick}
                 />
 
                 <RoundButton
                     colour="green"
                     symbol="check"
                     fontSize={48}
-                    onClick={() => setQuestion(getQuestion(getRandomCategory(categories)))}
+                    onClick={handleButtonClick}
                 />
             </div>
         </div>

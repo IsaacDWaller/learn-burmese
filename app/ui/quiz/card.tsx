@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from "react";
-
 interface CardProps {
     english: string,
     burmese: string,
-    initialLanguage: string,
+    language: string,
+    onClick: () => void,
 };
 
-export default function Card({ english, burmese, initialLanguage }: CardProps) {
-    const [language, setLanguage] = useState(initialLanguage);
-
+export default function Card({
+    english,
+    burmese,
+    language,
+    onClick,
+}: CardProps) {
     return <div
         className="relative w-96 h-48 flex flex-col justify-center items-center bg-white rounded-xl cursor-pointer select-none group transition ease-in-out shadow-lg  hover:shadow-xl active:shadow-md"
-        onClick={() => setLanguage(oldLanguage => {
-            return oldLanguage === "english" ? "burmese" : "english"
-        })}
+        onClick={onClick}
     >
         <span className="absolute top-4 left-4 text-4xl">
             {language === "english" ? "🇦🇺" : "🇲🇲"}

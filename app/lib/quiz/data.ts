@@ -10,8 +10,9 @@ export function getCategories(): string[] {
     return Object.keys(categories);
 }
 
-export function getQuestion(category: string): Question {
-    return categories[category]();
+export function getQuestion(selectedCategories: string[]): Question {
+    const index = Math.floor(Math.random() * selectedCategories.length);
+    return categories[selectedCategories[index]]();
 }
 
 export function getColoursQuestion(): Question {
