@@ -1,75 +1,55 @@
 "use client";
 
-import Categories from "@/app/ui/categories";
-import QuestionLanguageToggle from "@/app/ui/question-language-toggle";
-import { usePathname, useRouter } from "next/navigation";
+import Category from "@/app/ui/category";
+import "material-symbols";
+import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
+const categories: { icon: string, text: string }[] = [
+  { icon: "style", text: "Adjectives" },
+  { icon: "palette", text: "Colours" },
+  { icon: "category", text: "Nouns" },
+  { icon: "numbers", text: "Numbers" },
+  { icon: "bolt", text: "Verbs" },
+];
+
 export default function Page() {
-  const [selectedCategories, setSelectedCategories] = useState([] as string[]);
+  const [enabledCategories, setEnabledCategories] = useState<string[]>([...categories.map(category => category.text)]);
 
-  const [
-    selectedQuestionLanguage,
-    setSelectedQuestionLanguage,
-  ] = useState(["english"]);
+  function handleCategoryClick(clickedCategory: string) {
+    setEnabledCategories(enabledCategories => {
+      if (enabledCategories.length <= 1 && clickedCategory === enabledCategories[0]) return enabledCategories;
 
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  function handleQuestionLanguageChange(questionLanguage: string[]) {
-    if (!questionLanguage.length) return;
-    setSelectedQuestionLanguage(questionLanguage);
+      if (enabledCategories.includes(clickedCategory)) {
+        return enabledCategories.filter(enabledCategory => enabledCategory !== clickedCategory);
+      }
+      else return [...enabledCategories, clickedCategory];
+    });
   }
 
-  function handleCategoryClick(category: string) {
-    if (!selectedCategories.includes(category)) {
-      setSelectedCategories([...selectedCategories, category]);
-    }
-    else {
-      setSelectedCategories(oldCategories => {
-        return oldCategories.filter(oldCategory => oldCategory !== category);
-      });
-    }
-  }
+  return <div className="w-screen h-screen flex flex-col gap-8 bg-slate-100">
+    <header className="p-4 bg-slate-50 ring">
+      <Link href="/" className="inline-flex flex-row items-center gap-4">
+        <Image src="https://flagcdn.com/48x36/mm.png" width="48" height="36" alt="Myanmar" />
+        <h1 className="text-4xl text-slate-900 select-none">Learn Burmese</h1>
+      </Link>
+    </header>
 
-  function handleStartQuiz() {
-    const newSearchParams = new URLSearchParams();
+    <div className="flex flex-row">
+      <aside className="w-64 flex flex-col gap-4 p-4">
+        <h2 className="text-2xl text-slate-800">Categories</h2>
 
-    for (const category of selectedCategories) {
-      newSearchParams.append("categories", category);
-    }
-
-    newSearchParams.set("questionLanguage", selectedQuestionLanguage[0]);
-    replace(`quiz/${pathname}?${newSearchParams}`);
-  }
-
-  return <div
-    className="w-screen h-screen flex flex-col justify-center items-center bg-white"
-  >
-    <h1 className="mb-16 text-gray-600 text-4xl">Customise Quiz</h1>
-
-    <div className="flex flex-col items-center gap-4 mb-16">
-      <h2 className="text-gray-600 text-2xl">Categories</h2>
-
-      <Categories
-        selectedCategories={selectedCategories}
-        onCategoryClick={handleCategoryClick}
-      />
+        <div className="flex flex-col gap-4">
+          {categories.map(category => <Category
+            key={category.text}
+            icon={category.icon}
+            text={category.text}
+            enabled={enabledCategories.includes(category.text)}
+            handleClick={() => handleCategoryClick(category.text)}
+          />)}
+        </div>
+      </aside>
     </div>
-
-    <div className="flex flex-col items-center gap-4 mb-16">
-      <h2 className="text-gray-600 text-2xl">Question Language</h2>
-      <QuestionLanguageToggle
-        selectedQuestionLanguages={selectedQuestionLanguage}
-        onValueChange={handleQuestionLanguageChange}
-      />
-    </div>
-
-    <button
-      className="p-4 text-white rounded-full cursor-pointer transition ease-in-out bg-yellow-500 hover:bg-yellow-400 active:bg-yellow-600"
-      onClick={handleStartQuiz}
-    >
-      Start Quiz
-    </button>
   </div>;
 }
