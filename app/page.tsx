@@ -1,65 +1,138 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { CheckIcon } from "@/app/_components/CheckIcon";
+import { classNames } from "@/lib/class-name-generator";
+import { titleCase } from "@/lib/string-formatter";
+import { Toggle } from "@base-ui/react/toggle";
+import { ToggleGroup } from "@base-ui/react/toggle-group";
+import Image from "next/image";
+import { useState } from "react";
+
+interface Language {
+  flagPath: string;
+  value: string;
+}
+
+const languages: Language[] = [
+  { flagPath: "/union-jack.svg", value: "english" },
+  { flagPath: "/flag-of-myanmar.svg", value: "burmese" },
+];
+
+interface Category {
+  icon: string;
+  value: string;
+}
+
+const categories: Category[] = [
+  { icon: "palette", value: "adjectives" },
+  { icon: "bolt", value: "verbs" },
+  { icon: "calculate", value: "numbers" },
+];
+
+export default function Page() {
+  const [activeQuestionLanguageToggles, setActiveQuestionLanguageToggles] =
+    useState<string[]>([languages[0].value]);
+
+  const [activeCategoryToggles, setActiveCategoryToggles] = useState<string[]>(
+    categories.map((category) => category.value),
+  );
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <aside className="border-e border-gray-700 bg-gray-900 ps-8 pe-4 pt-4">
+        <section>
+          <h2 className="mb-2 text-xs text-gray-400">Question Language</h2>
+
+          <ToggleGroup
+            value={activeQuestionLanguageToggles}
+            className="flex w-64 flex-row"
+            onValueChange={setActiveQuestionLanguageToggles}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {languages.map((language, index) => (
+              <Toggle
+                key={language.value}
+                aria-label={language.value}
+                value={language.value}
+                className={classNames(
+                  "group flex flex-1 justify-center p-2",
+                  index <= 0 ? "rounded-s-md" : "rounded-e-md",
+                  activeQuestionLanguageToggles.includes(language.value)
+                    ? "bg-gray-800 text-white"
+                    : "cursor-pointer transition-all ease-in-out hover:bg-gray-800",
+                )}
+              >
+                <Image
+                  src={language.flagPath}
+                  className="w-6 rounded-sm"
+                  width="48"
+                  height="32"
+                  alt="Myanmar"
+                />
+
+                <span
+                  className={classNames(
+                    "ms-2 text-sm",
+                    activeQuestionLanguageToggles.includes(language.value)
+                      ? "text-white"
+                      : "text-gray-400 transition-all ease-in-out group-hover:text-white",
+                  )}
+                >
+                  {titleCase(language.value)}
+                </span>
+              </Toggle>
+            ))}
+          </ToggleGroup>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="mb-2 text-xs text-gray-400">Categories</h2>
+
+          <ToggleGroup
+            value={activeCategoryToggles}
+            className="flex flex-col"
+            onValueChange={setActiveCategoryToggles}
+            multiple
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <ul className="space-y-1">
+              {categories.map((category) => (
+                <li key={category.value}>
+                  <Toggle
+                    aria-label={titleCase(category.value)}
+                    value={category.value}
+                    className="group flex w-64 cursor-pointer items-center justify-between rounded-md p-2 text-gray-400 transition-all ease-in-out select-none hover:bg-gray-800 hover:text-white data-pressed:bg-gray-800 data-pressed:text-white"
+                  >
+                    <label className="flex cursor-pointer items-center">
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: "24px" }}
+                      >
+                        {category.icon}
+                      </span>
+
+                      <span className="ms-2 text-sm">
+                        {titleCase(category.value)}
+                      </span>
+                    </label>
+
+                    <div
+                      className={classNames(
+                        "flex size-5 items-center justify-center rounded-sm transition-all ease-in-out",
+                        activeCategoryToggles.includes(category.value)
+                          ? "bg-white"
+                          : "border border-gray-400 group-hover:border-white",
+                      )}
+                    >
+                      <CheckIcon className="flex size-3 text-gray-900 transition-all ease-in-out group-hover:text-gray-800" />
+                    </div>
+                  </Toggle>
+                </li>
+              ))}
+            </ul>
+          </ToggleGroup>
+        </section>
+      </aside>
+
+      <main className="w-full bg-gray-800"></main>
+    </>
   );
 }

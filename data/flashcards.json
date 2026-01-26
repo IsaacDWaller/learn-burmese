@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "english": "hot",
+    "mlcts": "pu",
+    "burmese": "ပူ"
+  },
+  {
+    "id": 2,
+    "english": "cold",
+    "mlcts": "ei",
+    "burmese": "အေး"
+  },
+  {
+    "id": 3,
+    "english": "good",
+    "mlcts": "kaung",
+    "burmese": "ပကောင်း"
+  },
+  {
+    "id": 4,
+    "english": "all right",
+    "mlcts": "ra",
+    "burmese": "ရ"
+  },
+  {
+    "id": 5,
+    "english": "it's hot, isn't it?",
+    "mlcts": "pu tai nau?",
+    "burmese": "ပူတယ်နော်?"
+  },
+  {
+    "id": 6,
+    "english": "it's cold, isn't it?",
+    "mlcts": "ei tai nau?",
+    "burmese": "အေးတယ်နော်?"
+  },
+  {
+    "id": 7,
+    "english": "it's good, isn't it?",
+    "mlcts": "kaung tai nau?",
+    "burmese": "ကောင်းတယ်နော်?"
+  },
+  {
+    "id": 8,
+    "english": "it's all right, isn't it?",
+    "mlcts": "ra tai nau?",
+    "burmese": "ရတယ်နော်?"
+  }
+]
