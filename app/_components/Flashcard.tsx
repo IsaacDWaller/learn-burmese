@@ -1,11 +1,12 @@
 "use client";
 
 import { synthesizeSpeech } from "@/lib/actions";
+import { classNames } from "@/lib/class-name-generator";
 import { getRandomFlashcardInformation } from "@/lib/flashcard-generator";
 import { FlashcardInformation } from "@/types/Flashcard";
 import { useEffect, useState } from "react";
 
-export default function Flashcard() {
+export default function Flashcard({ className }: { className?: string }) {
   const [flashcardInformation, setFlashcardInformation] =
     useState<FlashcardInformation>({
       id: 1,
@@ -28,7 +29,10 @@ export default function Flashcard() {
 
   return (
     <div
-      className="max-w-sm cursor-pointer rounded px-12 py-4 text-center shadow-lg transition-shadow ease-in-out select-none hover:shadow-xl active:shadow-md"
+      className={classNames(
+        className || "",
+        "flex cursor-pointer items-center justify-center rounded bg-gray-700 transition-all ease-in-out select-none hover:bg-gray-600",
+      )}
       onClick={handleClick}
     >
       <p className="mb-2 text-xl font-bold">{flashcardInformation.english}</p>

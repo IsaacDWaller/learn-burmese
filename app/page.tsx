@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckIcon } from "@/app/_components/CheckIcon";
+import Flashcard from "@/app/_components/Flashcard";
 import { classNames } from "@/lib/class-name-generator";
 import { titleCase } from "@/lib/string-formatter";
 import { Toggle } from "@base-ui/react/toggle";
@@ -38,7 +39,7 @@ export default function Page() {
   );
 
   return (
-    <>
+    <div className="flex min-h-0 flex-1">
       <aside className="border-e border-gray-700 bg-gray-900 ps-8 pe-4 pt-4">
         <section>
           <h2 className="mb-2 text-xs text-gray-400">Question Language</h2>
@@ -132,7 +133,9 @@ export default function Page() {
         </section>
       </aside>
 
-      <main className="w-full bg-gray-800"></main>
-    </>
+      <main className="flex w-full bg-gray-800">
+        <Flashcard className="m-4 flex-1" />
+      </main>
+    </div>
   );
 }
