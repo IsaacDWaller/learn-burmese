@@ -4,19 +4,20 @@ import { CheckIcon } from "@/app/_components/CheckIcon";
 import Flashcard from "@/app/_components/Flashcard";
 import { classNames } from "@/lib/class-name-generator";
 import { titleCase } from "@/lib/string-formatter";
+import { Language } from "@/types/Language";
 import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
 import Image from "next/image";
 import { useState } from "react";
 
-interface Language {
+interface LanguageToggle {
+  language: Language;
   flagPath: string;
-  value: string;
 }
 
-const languages: Language[] = [
-  { flagPath: "/union-jack.svg", value: "english" },
-  { flagPath: "/flag-of-myanmar.svg", value: "burmese" },
+const languageToggles: LanguageToggle[] = [
+  { language: Language.English, flagPath: "/union-jack.svg" },
+  { language: Language.Burmese, flagPath: "/flag-of-myanmar.svg" },
 ];
 
 interface Category {
@@ -32,7 +33,7 @@ const categories: Category[] = [
 
 export default function Page() {
   const [activeQuestionLanguageToggles, setActiveQuestionLanguageToggles] =
-    useState<string[]>([languages[0].value]);
+    useState<Language[]>([languageToggles[0].language]);
 
   const [activeCategoryToggles, setActiveCategoryToggles] = useState<string[]>(
     categories.map((category) => category.value),
@@ -49,36 +50,36 @@ export default function Page() {
             className="flex w-64 flex-row"
             onValueChange={setActiveQuestionLanguageToggles}
           >
-            {languages.map((language, index) => (
+            {languageToggles.map((toggle, index) => (
               <Toggle
-                key={language.value}
-                aria-label={language.value}
-                value={language.value}
+                key={toggle.language}
+                aria-label={toggle.language}
+                value={toggle.language}
                 className={classNames(
                   "group flex flex-1 justify-center p-2",
                   index <= 0 ? "rounded-s-md" : "rounded-e-md",
-                  activeQuestionLanguageToggles.includes(language.value)
+                  activeQuestionLanguageToggles.includes(toggle.language)
                     ? "bg-gray-800 text-white"
                     : "cursor-pointer transition-all ease-in-out hover:bg-gray-800",
                 )}
               >
                 <Image
-                  src={language.flagPath}
+                  src={toggle.flagPath}
                   className="w-6 rounded-sm"
                   width="48"
                   height="32"
-                  alt="Myanmar"
+                  alt={titleCase(toggle.language)}
                 />
 
                 <span
                   className={classNames(
                     "ms-2 text-sm",
-                    activeQuestionLanguageToggles.includes(language.value)
+                    activeQuestionLanguageToggles.includes(toggle.language)
                       ? "text-white"
                       : "text-gray-400 transition-all ease-in-out group-hover:text-white",
                   )}
                 >
-                  {titleCase(language.value)}
+                  {titleCase(toggle.language)}
                 </span>
               </Toggle>
             ))}
@@ -134,7 +135,10 @@ export default function Page() {
       </aside>
 
       <main className="flex w-full bg-gray-800">
-        <Flashcard className="m-4 flex-1" />
+        <Flashcard
+          questionLanguage={activeQuestionLanguageToggles[0]}
+          className="m-4 flex-1"
+        />
       </main>
     </div>
   );

@@ -4,10 +4,17 @@ import { synthesizeSpeech } from "@/lib/actions";
 import { classNames } from "@/lib/class-name-generator";
 import { getRandomFlashcardInformation } from "@/lib/flashcard-generator";
 import { titleCase } from "@/lib/string-formatter";
-import { FlashcardInformation } from "@/types/Flashcard";
+import { FlashcardInformation } from "@/types/FlashcardInformation";
+import { Language } from "@/types/Language";
 import { useEffect, useState } from "react";
 
-export default function Flashcard({ className }: { className?: string }) {
+export default function Flashcard({
+  questionLanguage,
+  className,
+}: {
+  questionLanguage: Language;
+  className?: string;
+}) {
   const [flashcardInformation, setFlashcardInformation] =
     useState<FlashcardInformation>({
       id: 1,
@@ -41,10 +48,15 @@ export default function Flashcard({ className }: { className?: string }) {
       )}
       onClick={handleClick}
     >
-      <span className="text-4xl text-white">
-        {flashcardInformation.english}
-      </span>
-      <span className="text-4xl text-white">{flashcardInformation.mlcts}</span>
+      {questionLanguage === Language.English ? (
+        <span className="text-4xl text-white">
+          {flashcardInformation.english}
+        </span>
+      ) : (
+        <span className="text-4xl text-white">
+          {flashcardInformation.mlcts}
+        </span>
+      )}
     </div>
   );
 }
