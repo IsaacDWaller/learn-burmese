@@ -3,6 +3,7 @@
 import { synthesizeSpeech } from "@/lib/actions";
 import { classNames } from "@/lib/class-name-generator";
 import { getRandomFlashcardInformation } from "@/lib/flashcard-generator";
+import { titleCase } from "@/lib/string-formatter";
 import { FlashcardInformation } from "@/types/Flashcard";
 import { useEffect, useState } from "react";
 
@@ -15,8 +16,13 @@ export default function Flashcard({ className }: { className?: string }) {
       burmese: "",
     });
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => setFlashcardInformation(getRandomFlashcardInformation()), []);
+  useEffect(() => {
+    const flashcardInformation = getRandomFlashcardInformation();
+    flashcardInformation.english = titleCase(flashcardInformation.english);
+    flashcardInformation.mlcts = titleCase(flashcardInformation.mlcts);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFlashcardInformation(flashcardInformation);
+  }, []);
 
   async function handleClick() {
     const url = await synthesizeSpeech(
@@ -31,12 +37,14 @@ export default function Flashcard({ className }: { className?: string }) {
     <div
       className={classNames(
         className || "",
-        "flex cursor-pointer items-center justify-center rounded bg-gray-700 transition-all ease-in-out select-none hover:bg-gray-600",
+        "flex cursor-pointer items-center justify-center rounded-lg bg-gray-700 transition-all ease-in-out select-none hover:bg-gray-600",
       )}
       onClick={handleClick}
     >
-      <p className="mb-2 text-xl font-bold">{flashcardInformation.english}</p>
-      <p className="text-base text-gray-700">{flashcardInformation.mlcts}</p>
+      <span className="text-4xl text-white">
+        {flashcardInformation.english}
+      </span>
+      <span className="text-4xl text-white">{flashcardInformation.mlcts}</span>
     </div>
   );
 }
