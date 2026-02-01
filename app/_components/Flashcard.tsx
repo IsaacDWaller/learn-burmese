@@ -8,6 +8,16 @@ import { FlashcardInformation } from "@/types/FlashcardInformation";
 import { Language } from "@/types/Language";
 import { useEffect, useState } from "react";
 
+interface AnswerButton {
+  value: "correct" | "incorrect";
+  icon: string;
+}
+
+const answerButtons: AnswerButton[] = [
+  { value: "incorrect", icon: "close" },
+  { value: "correct", icon: "check" },
+];
+
 export default function Flashcard({
   questionLanguage,
   className,
@@ -51,39 +61,56 @@ export default function Flashcard({
   }
 
   return (
-    <div
-      className={classNames(
-        className || "",
-        "flex items-center justify-center rounded-lg bg-gray-700 select-none",
-        activeSide === questionLanguage
-          ? "cursor-pointer transition-all ease-in-out hover:bg-gray-600"
-          : "relative",
-      )}
-      onClick={handleClick}
-    >
-      {activeSide !== questionLanguage && (
-        <button
-          className="material-symbols-outlined absolute top-4 right-4 rounded bg-gray-500 p-2 text-white hover:bg-gray-400"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleListenButtonClick();
-          }}
-          aria-label="Listen"
-          type="button"
-        >
-          volume_up
-        </button>
-      )}
+    <div className={classNames(className || "", "flex flex-col")}>
+      <div
+        className={classNames(
+          "mb-2 flex h-full items-center justify-center rounded-lg bg-gray-700 select-none",
+          activeSide === questionLanguage
+            ? "cursor-pointer transition-all ease-in-out hover:bg-gray-600"
+            : "relative",
+        )}
+        onClick={handleClick}
+      >
+        {activeSide !== questionLanguage && (
+          <button
+            className="material-symbols-outlined absolute end-4 top-4 rounded bg-gray-500 p-2 text-white hover:bg-gray-400"
+            style={{ fontSize: "32px" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleListenButtonClick();
+            }}
+          >
+            volume_up
+          </button>
+        )}
 
-      {activeSide === Language.English ? (
-        <span className="text-4xl text-white">
-          {flashcardInformation.english}
-        </span>
-      ) : (
-        <span className="text-4xl text-white">
-          {flashcardInformation.mlcts}
-        </span>
-      )}
+        {activeSide === Language.English ? (
+          <span className="text-4xl text-white">
+            {flashcardInformation.english}
+          </span>
+        ) : (
+          <>
+            <span className="text-4xl text-white">
+              {flashcardInformation.mlcts}
+            </span>
+
+            <div className="flex justify-between">
+              {answerButtons.map((button) => (
+                <button
+                  key={button.value}
+                  className={classNames(
+                    "material-symbols-outlined absolute bottom-4 cursor-pointer rounded-full p-4 text-gray-400 transition-all ease-in-out hover:bg-gray-600 hover:text-white",
+                    button.value === "incorrect" ? "start-4" : "end-4",
+                  )}
+                  style={{ fontSize: "32px" }}
+                >
+                  {button.icon}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
