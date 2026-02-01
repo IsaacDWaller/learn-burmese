@@ -73,12 +73,9 @@ export default function Flashcard({
       >
         {activeSide !== questionLanguage && (
           <button
-            className="material-symbols-outlined absolute end-4 top-4 rounded bg-gray-500 p-2 text-white hover:bg-gray-400"
+            className="material-symbols-outlined absolute end-4 top-4 cursor-pointer rounded-full p-4 text-gray-400 transition-all ease-in-out hover:bg-gray-600 hover:text-white"
             style={{ fontSize: "32px" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleListenButtonClick();
-            }}
+            onClick={handleListenButtonClick}
           >
             volume_up
           </button>
