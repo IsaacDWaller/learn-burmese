@@ -5,6 +5,7 @@ import { classNames } from "@/lib/class-name-generator";
 import { getRandomFlashcardInformation } from "@/lib/flashcard-generator";
 import { titleCase } from "@/lib/string-formatter";
 import { FlashcardInformation } from "@/types/FlashcardInformation";
+import { FlashcardSide } from "@/types/FlashcardSide";
 import { Language } from "@/types/Language";
 import { useEffect, useState } from "react";
 
@@ -20,9 +21,11 @@ const answerButtons: AnswerButton[] = [
 
 export default function Flashcard({
   questionLanguage,
+  answerLanguage,
   className,
 }: {
   questionLanguage: Language;
+  answerLanguage: Language;
   className?: string;
 }) {
   const [flashcardInformation, setFlashcardInformation] =
@@ -33,7 +36,9 @@ export default function Flashcard({
       burmese: "",
     });
 
-  const [activeSide, setActiveSide] = useState<Language>(questionLanguage);
+  const [activeSide, setActiveSide] = useState<FlashcardSide>(
+    FlashcardSide.Question,
+  );
 
   useEffect(() => {
     const flashcardInformation = getRandomFlashcardInformation();
@@ -43,12 +48,18 @@ export default function Flashcard({
     setFlashcardInformation(flashcardInformation);
   }, []);
 
-  async function handleClick() {
-    if (activeSide !== questionLanguage) return;
+  function getText(): string {
+    const activeLanguage =
+      activeSide === FlashcardSide.Question ? questionLanguage : answerLanguage;
 
-    setActiveSide((activeSide) =>
-      activeSide === Language.English ? Language.Burmese : Language.English,
-    );
+    return activeLanguage === Language.English
+      ? flashcardInformation.english
+      : flashcardInformation.mlcts;
+  }
+
+  async function handleClick() {
+    if (activeSide === FlashcardSide.Answer) return;
+    setActiveSide(FlashcardSide.Answer);
   }
 
   async function handleListenButtonClick() {
@@ -65,31 +76,23 @@ export default function Flashcard({
       <div
         className={classNames(
           "mb-2 flex h-full items-center justify-center rounded-lg bg-gray-700 select-none",
-          activeSide === questionLanguage
+          activeSide === FlashcardSide.Question
             ? "cursor-pointer transition-all ease-in-out hover:bg-gray-600"
             : "relative",
         )}
         onClick={handleClick}
       >
-        {activeSide !== questionLanguage && (
-          <button
-            className="material-symbols-outlined absolute end-4 top-4 cursor-pointer rounded-full p-4 text-gray-400 transition-all ease-in-out hover:bg-gray-600 hover:text-white"
-            style={{ fontSize: "32px" }}
-            onClick={handleListenButtonClick}
-          >
-            volume_up
-          </button>
-        )}
+        <span className="text-4xl text-white">{getText()}</span>
 
-        {activeSide === Language.English ? (
-          <span className="text-4xl text-white">
-            {flashcardInformation.english}
-          </span>
-        ) : (
+        {activeSide === FlashcardSide.Answer && (
           <>
-            <span className="text-4xl text-white">
-              {flashcardInformation.mlcts}
-            </span>
+            <button
+              className="material-symbols-outlined absolute end-4 top-4 cursor-pointer rounded-full p-4 text-gray-400 transition-all ease-in-out hover:bg-gray-600 hover:text-white"
+              style={{ fontSize: "32px" }}
+              onClick={handleListenButtonClick}
+            >
+              volume_up
+            </button>
 
             <div className="flex justify-between">
               {answerButtons.map((button) => (

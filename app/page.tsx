@@ -137,6 +137,11 @@ export default function Page() {
       <main className="flex w-full bg-gray-800">
         <Flashcard
           questionLanguage={activeQuestionLanguageToggles[0]}
+          answerLanguage={
+            activeQuestionLanguageToggles[0] === Language.English
+              ? Language.Burmese
+              : Language.English
+          }
           className="m-4 flex-1"
         />
       </main>
