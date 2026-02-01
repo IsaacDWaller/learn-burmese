@@ -62,6 +62,7 @@ export default function Page() {
                     ? "bg-gray-800 text-white"
                     : "cursor-pointer transition-all ease-in-out hover:bg-gray-800",
                 )}
+                disabled={activeQuestionLanguageToggles[0] === toggle.language}
               >
                 <Image
                   src={toggle.flagPath}
