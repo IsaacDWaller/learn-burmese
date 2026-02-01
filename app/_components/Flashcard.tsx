@@ -23,6 +23,8 @@ export default function Flashcard({
       burmese: "",
     });
 
+  const [activeSide, setActiveSide] = useState<Language>(questionLanguage);
+
   useEffect(() => {
     const flashcardInformation = getRandomFlashcardInformation();
     flashcardInformation.english = titleCase(flashcardInformation.english);
@@ -32,6 +34,14 @@ export default function Flashcard({
   }, []);
 
   async function handleClick() {
+    if (activeSide !== questionLanguage) return;
+
+    setActiveSide((activeSide) =>
+      activeSide === Language.English ? Language.Burmese : Language.English,
+    );
+  }
+
+  async function handleListenButtonClick() {
     const url = await synthesizeSpeech(
       flashcardInformation.id,
       flashcardInformation.burmese,
@@ -44,11 +54,28 @@ export default function Flashcard({
     <div
       className={classNames(
         className || "",
-        "flex cursor-pointer items-center justify-center rounded-lg bg-gray-700 transition-all ease-in-out select-none hover:bg-gray-600",
+        "flex items-center justify-center rounded-lg bg-gray-700 select-none",
+        activeSide === questionLanguage
+          ? "cursor-pointer transition-all ease-in-out hover:bg-gray-600"
+          : "relative",
       )}
       onClick={handleClick}
     >
-      {questionLanguage === Language.English ? (
+      {activeSide !== questionLanguage && (
+        <button
+          className="material-symbols-outlined absolute top-4 right-4 rounded bg-gray-500 p-2 text-white hover:bg-gray-400"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleListenButtonClick();
+          }}
+          aria-label="Listen"
+          type="button"
+        >
+          volume_up
+        </button>
+      )}
+
+      {activeSide === Language.English ? (
         <span className="text-4xl text-white">
           {flashcardInformation.english}
         </span>
