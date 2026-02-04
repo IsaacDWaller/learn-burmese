@@ -41,11 +41,8 @@ export default function Flashcard({
   );
 
   useEffect(() => {
-    const flashcardInformation = getRandomFlashcardInformation();
-    flashcardInformation.english = titleCase(flashcardInformation.english);
-    flashcardInformation.mlcts = titleCase(flashcardInformation.mlcts);
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFlashcardInformation(flashcardInformation);
+    setFlashcardInformation(getRandomFlashcardInformation());
   }, []);
 
   function getText(): string {
@@ -71,6 +68,16 @@ export default function Flashcard({
     new Audio(url[0]).play();
   }
 
+  async function handleCorrectButtonClick() {
+    setFlashcardInformation(getRandomFlashcardInformation());
+    setActiveSide(FlashcardSide.Question);
+  }
+
+  async function handleIncorrectButtonClick() {
+    setFlashcardInformation(getRandomFlashcardInformation());
+    setActiveSide(FlashcardSide.Question);
+  }
+
   return (
     <div className={classNames(className || "", "flex flex-col")}>
       <div
@@ -82,7 +89,7 @@ export default function Flashcard({
         )}
         onClick={handleClick}
       >
-        <span className="text-4xl text-white">{getText()}</span>
+        <span className="text-4xl text-white">{titleCase(getText())}</span>
 
         {activeSide === FlashcardSide.Answer && (
           <>
@@ -103,6 +110,11 @@ export default function Flashcard({
                     button.value === "incorrect" ? "start-4" : "end-4",
                   )}
                   style={{ fontSize: "32px" }}
+                  onClick={
+                    button.value === "correct"
+                      ? handleCorrectButtonClick
+                      : handleIncorrectButtonClick
+                  }
                 >
                   {button.icon}
                 </button>
