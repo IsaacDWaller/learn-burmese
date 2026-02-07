@@ -26,15 +26,12 @@ export default function UserNavigationLink({
     >
       <Menu.Item
         className={classNames(
-          "w-48 border-gray-700 px-4 py-2",
+          "w-48 border-x border-gray-700 px-4 py-2",
           href === pathname
             ? "cursor-default bg-gray-800 text-white"
             : "cursor-pointer bg-gray-900 text-gray-400 transition-all ease-in-out hover:bg-gray-800 hover:text-white",
-          index <= 0 ? "rounded-t-md border-s border-e border-t" : "",
-          index > 0 && index < numberOfNavigationLinks - 1 ? "border-x" : "",
-          index >= numberOfNavigationLinks - 1
-            ? "rounded-b-md border-s border-e border-b"
-            : "",
+          index <= 0 ? "rounded-t-md border-t" : "",
+          index >= numberOfNavigationLinks - 1 ? "rounded-b-md border-b" : "",
         )}
         disabled={href === pathname}
       >
