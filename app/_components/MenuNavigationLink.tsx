@@ -4,8 +4,7 @@ import { classNames } from "@/lib/class-name-generator";
 import { createClient } from "@/lib/supabase/client";
 import { Menu } from "@base-ui/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
 const supabase = createClient();
 
