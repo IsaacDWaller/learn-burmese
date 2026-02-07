@@ -5,7 +5,7 @@ import { Menu } from "@base-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function UserNavigationLink({
+export default function MenuNavigationLink({
   name,
   href,
   index,

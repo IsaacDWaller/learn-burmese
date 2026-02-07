@@ -4,7 +4,7 @@ import { classNames } from "@/lib/class-name-generator";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function NavigationLink({
+export default function NavbarNavigationLink({
   name,
   href,
 }: {
