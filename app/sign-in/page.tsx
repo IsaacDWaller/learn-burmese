@@ -14,7 +14,7 @@ export default function Page() {
     await supabase.auth.signInWithOtp({
       email: emailAddress.toString(),
       options: {
-        emailRedirectTo: "http://localhost:3000",
+        emailRedirectTo: "http://localhost:3000/",
       },
     });
   }
