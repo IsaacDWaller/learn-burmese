@@ -1,23 +1,24 @@
+"use client";
+
 import { FlashcardsIcon } from "@/app/_components/FlashcardsIcon";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
 
 export default function Page() {
   async function signInWithEmail(formData: FormData) {
-    "use server";
-
     const emailAddress = formData.get("email-address");
     if (!emailAddress) return;
 
-    await (
-      await supabase
-    ).auth.signInWithOtp({
+    const { data, error } = await supabase.auth.signInWithOtp({
       email: emailAddress.toString(),
       options: {
         emailRedirectTo: "http://localhost:3000",
       },
     });
+
+    console.log(data);
+    console.log(error);
   }
 
   return (
