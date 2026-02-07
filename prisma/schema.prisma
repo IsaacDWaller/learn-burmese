@@ -6,3 +6,20 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id String @id @db.Uuid
+  email String @db.VarChar(254) @unique
+  preferences UserPreferences?
+}
+
+enum QuestionLanguage {
+  ENGLISH
+  BURMESE
+}
+
+model UserPreferences {
+  userId String @id @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionLanguage QuestionLanguage
+}
