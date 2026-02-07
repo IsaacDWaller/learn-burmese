@@ -11,7 +11,7 @@ const supabase = createClient();
 
 interface NavigationLink {
   name: string;
-  href: string;
+  href?: string;
   requiresSignIn?: boolean;
 }
 
@@ -23,7 +23,7 @@ const navbarNavigationLinks: NavigationLink[] = [
 const menuNavigationLinks: NavigationLink[] = [
   { name: "Sign in", href: "/sign-in", requiresSignIn: false },
   { name: "Profile", href: "/profile", requiresSignIn: true },
-  { name: "Sign out", href: "/sign-out", requiresSignIn: true },
+  { name: "Sign out", requiresSignIn: true },
 ];
 
 export default async function Layout({
@@ -32,6 +32,10 @@ export default async function Layout({
   const {
     data: { user },
   } = await (await supabase).auth.getUser();
+
+  const filteredMenuNavigationLinks = menuNavigationLinks.filter(
+    (link) => link.requiresSignIn === !!user,
+  );
 
   return (
     <>
@@ -49,7 +53,7 @@ export default async function Layout({
               <NavbarNavigationLink
                 key={link.name}
                 name={link.name}
-                href={link.href}
+                href={link.href || ""}
               />
             ))}
           </nav>
@@ -66,23 +70,15 @@ export default async function Layout({
           <Menu.Portal>
             <Menu.Positioner sideOffset={8}>
               <Menu.Popup className="origin-(--transform-origin) transition-all ease-in-out data-ending-style:scale-90 data-ending-style:opacity-0 data-starting-style:scale-90 data-starting-style:opacity-0">
-                {menuNavigationLinks.map((link, index) => {
-                  const numberOfNavigationLinks = menuNavigationLinks.filter(
-                    (link) => link.requiresSignIn === !!user,
-                  ).length;
-
-                  return (
-                    link.requiresSignIn === !!user && (
-                      <MenuNavigationLink
-                        key={link.name}
-                        name={link.name}
-                        href={link.href}
-                        index={index}
-                        numberOfNavigationLinks={numberOfNavigationLinks}
-                      />
-                    )
-                  );
-                })}
+                {filteredMenuNavigationLinks.map((link, index) => (
+                  <MenuNavigationLink
+                    key={link.name}
+                    name={link.name}
+                    href={link.href}
+                    index={index}
+                    numberOfNavigationLinks={filteredMenuNavigationLinks.length}
+                  />
+                ))}
               </Menu.Popup>
             </Menu.Positioner>
           </Menu.Portal>

@@ -6,19 +6,17 @@ import { createClient } from "@/lib/supabase/client";
 const supabase = createClient();
 
 export default function Page() {
-  async function signInWithEmail(formData: FormData) {
-    const emailAddress = formData.get("email-address");
+  async function signInWithEmail(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const emailAddress = new FormData(event.currentTarget).get("email-address");
     if (!emailAddress) return;
 
-    const { data, error } = await supabase.auth.signInWithOtp({
+    await supabase.auth.signInWithOtp({
       email: emailAddress.toString(),
       options: {
         emailRedirectTo: "http://localhost:3000",
       },
     });
-
-    console.log(data);
-    console.log(error);
   }
 
   return (
@@ -30,7 +28,7 @@ export default function Page() {
       </h2>
 
       <div className="mx-auto w-sm">
-        <form action={signInWithEmail} className="flex flex-col gap-6">
+        <form onSubmit={signInWithEmail} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <label htmlFor="email-address" className="text-sm/6 text-gray-100">
               Email address
