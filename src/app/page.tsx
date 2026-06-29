@@ -8,6 +8,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { generateBurmeseAudio } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -17,10 +18,6 @@ export default function Page() {
   function handleCardClick() {
     if (revealed) return;
     setRevealed(true);
-  }
-
-  function handleListenButtonClick() {
-    console.log("Listen button clicked");
   }
 
   function handleIncorrectButtonClick() {
@@ -44,7 +41,7 @@ export default function Page() {
               className={
                 revealed ? "cursor-pointer" : "pointer-events-none opacity-0"
               }
-              onClick={handleListenButtonClick}
+              onClick={() => generateBurmeseAudio("ပူ")}
             >
               Listen
             </Button>
