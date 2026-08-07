@@ -20,6 +20,16 @@ export default function Page() {
     setRevealed(true);
   }
 
+  async function handleListenButtonClick() {
+    const wav = await generateBurmeseAudio("ပူ");
+
+    const audio = new Audio(
+      URL.createObjectURL(new Blob([wav], { type: "audio/wav" })),
+    );
+
+    audio.play();
+  }
+
   function handleIncorrectButtonClick() {
     console.log("Incorrect button clicked");
   }
@@ -41,7 +51,7 @@ export default function Page() {
               className={
                 revealed ? "cursor-pointer" : "pointer-events-none opacity-0"
               }
-              onClick={() => generateBurmeseAudio("ပူ")}
+              onClick={handleListenButtonClick}
             >
               Listen
             </Button>

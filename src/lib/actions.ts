@@ -1,7 +1,8 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
 import { GoogleGenAI } from "@google/genai";
-import { FileWriter } from "wav";
+import { WaveFile } from "wavefile";
 
 const ai = new GoogleGenAI({
   vertexai: true,
@@ -9,23 +10,9 @@ const ai = new GoogleGenAI({
   location: process.env.GOOGLE_CLOUD_LOCATION,
 });
 
-async function waveFile(filename: string, pcm: Buffer<ArrayBuffer>) {
-  return new Promise((resolve, reject) => {
-    const writer = new FileWriter(filename, {
-      channels: 1,
-      sampleRate: 16_000,
-      bitDepth: 16,
-    });
-
-    writer.on("finish", resolve);
-    writer.on("error", reject);
-
-    writer.write(pcm);
-    writer.end();
-  });
-}
-
-export async function generateBurmeseAudio(contents: string) {
+export async function generateBurmeseAudio(
+  contents: string,
+): Promise<Buffer<ArrayBuffer>> {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash-lite-preview-tts",
     contents,
@@ -48,5 +35,33 @@ export async function generateBurmeseAudio(contents: string) {
     throw new Error("No data");
   }
 
-  await waveFile("output.wav", Buffer.from(data, "base64"));
+  const supabase = await createClient();
+  const wav = pcmToWav(Buffer.from(data, "base64"));
+
+  const { error } = await supabase.storage
+    .from("text-to-speech")
+    .upload(`${Date.now()}.wav`, wav, {
+      contentType: "audio/wav",
+    });
+
+  if (error) throw error;
+
+  return wav;
+}
+
+function pcmToWav(pcm: Buffer): Buffer<ArrayBuffer> {
+  const wav = new WaveFile();
+
+  wav.fromScratch(
+    1,
+    24_000,
+    "16",
+    new Int16Array(
+      pcm.buffer,
+      pcm.byteOffset,
+      pcm.byteLength / Int16Array.BYTES_PER_ELEMENT,
+    ),
+  );
+
+  return Buffer.from(wav.toBuffer());
 }
