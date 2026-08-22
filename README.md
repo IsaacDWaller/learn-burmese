@@ -10,6 +10,32 @@
 | Next.js DevTools MCP | https://github.com/vercel/next-devtools-mcp           |
 | Playwright           | https://playwright.dev/docs/getting-started-cli       |
 
+## Plugins
+
+List marketplaces
+
+`copilot plugin marketplace list`
+
+Browse plugins in marketplace
+
+`copilot plugin marketplace browse MARKETPLACE-NAME`
+
+Install plugin
+
+`copilot plugin install PLUGIN-NAME@MARKETPLACE-NAME`
+
+List plugins
+
+`copilot plugin list`
+
+Update plugin
+
+`copilot plugin update PLUGIN-NAME`
+
+Uninstall plugin
+
+`copilot plugin uninstall PLUGIN-NAME`
+
 # Next.js
 
 ## Quick Start
