@@ -1,11 +1,27 @@
 {
   "servers": {
-    "shadcn": {
-      "command": "npx",
-      "args": [
-        "shadcn@latest",
-        "mcp"
-      ]
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    },
+    "chrome-devtools": {
+      "command": "pnx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "next-devtools": {
+      "command": "pnx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "playwright": {
+      "command": "pnx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp"
     }
   }
 }

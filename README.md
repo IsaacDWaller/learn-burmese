@@ -1,3 +1,15 @@
+# GitHub Copilot
+
+## MCP Servers
+
+| Name                 | URL                                                   |
+| -------------------- | ----------------------------------------------------- |
+| Context7             | https://context7.com/docs/clients/copilot-cli         |
+| Chrome DevTools MCP  | https://github.com/ChromeDevTools/chrome-devtools-mcp |
+| GitHub               | https://github.com/github/github-mcp-server           |
+| Next.js DevTools MCP | https://github.com/vercel/next-devtools-mcp           |
+| Playwright           | https://playwright.dev/docs/getting-started-cli       |
+
 # Next.js
 
 ## Quick Start
