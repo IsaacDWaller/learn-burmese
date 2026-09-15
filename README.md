@@ -56,6 +56,10 @@ Run ESLint
 
 ## Database Migrations
 
+Create migration file
+
+`npx supabase migration new table_name`
+
 Deploy database migrations
 
 `npx supabase db push`
