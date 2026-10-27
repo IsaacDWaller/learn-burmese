@@ -1,92 +1,31 @@
-"use client";
+import Flashcard from "@/components/flashcard";
+import { createClient } from "@/lib/supabase/server";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { generateBurmeseAudio } from "@/lib/actions";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+export default async function Page() {
+  const supabase = await createClient();
 
-export default function Page() {
-  const [revealed, setRevealed] = useState(false);
+  const { data: term, error } = await supabase
+    .from("terms")
+    .select("id, english, mlcts, burmese")
+    .limit(1)
+    .single();
 
-  function handleCardClick() {
-    if (revealed) return;
-    setRevealed(true);
-  }
-
-  async function handleListenButtonClick() {
-    const wav = await generateBurmeseAudio("ပူ");
-
-    const audio = new Audio(
-      URL.createObjectURL(new Blob([wav], { type: "audio/wav" })),
-    );
-
-    audio.play();
-  }
-
-  function handleIncorrectButtonClick() {
-    console.log("Incorrect button clicked");
-  }
-
-  function handleCorrectButtonClick() {
-    console.log("Correct button clicked");
+  if (error) {
+    console.error(error);
   }
 
   return (
     <main className="flex justify-center">
-      <Card
-        className={cn("w-sm", !revealed && "cursor-pointer")}
-        onClick={handleCardClick}
-      >
-        <CardHeader>
-          <CardAction>
-            <Button
-              variant="secondary"
-              className={
-                revealed ? "cursor-pointer" : "pointer-events-none opacity-0"
-              }
-              onClick={handleListenButtonClick}
-            >
-              Listen
-            </Button>
-          </CardAction>
-        </CardHeader>
-
-        <CardContent className="flex min-h-10 flex-col items-center justify-center">
-          {!revealed ? (
-            <p>hot</p>
-          ) : (
-            <>
-              <p>ပူ</p>
-              <p>pu</p>
-            </>
-          )}
-        </CardContent>
-
-        <CardFooter
-          className={
-            revealed ? "justify-between" : "pointer-events-none opacity-0"
-          }
-        >
-          <Button
-            variant="destructive"
-            className="cursor-pointer"
-            onClick={handleIncorrectButtonClick}
-          >
-            Incorrect
-          </Button>
-
-          <Button className="cursor-pointer" onClick={handleCorrectButtonClick}>
-            Correct
-          </Button>
-        </CardFooter>
-      </Card>
+      {error ? (
+        <p>Failed to load term</p>
+      ) : (
+        <Flashcard
+          id={term.id}
+          english={term.english}
+          mlcts={term.mlcts}
+          burmese={term.burmese}
+        />
+      )}
     </main>
   );
 }

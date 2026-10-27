@@ -11,11 +11,12 @@ const ai = new GoogleGenAI({
 });
 
 export async function generateBurmeseAudio(
-  contents: string,
+  id: number,
+  burmese: string,
 ): Promise<Buffer<ArrayBuffer>> {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash-lite-preview-tts",
-    contents,
+    contents: burmese,
     config: {
       responseModalities: ["AUDIO"],
       speechConfig: {
@@ -40,7 +41,7 @@ export async function generateBurmeseAudio(
 
   const { error } = await supabase.storage
     .from("text-to-speech")
-    .upload(`${Date.now()}.wav`, wav, {
+    .upload(`${id}.wav`, wav, {
       contentType: "audio/wav",
     });
 
