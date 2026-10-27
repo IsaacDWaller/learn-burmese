@@ -58,7 +58,7 @@ Run ESLint
 
 Create migration file
 
-`npx supabase migration new table_name`
+`npx supabase migration new migration_name`
 
 Deploy database migrations
 

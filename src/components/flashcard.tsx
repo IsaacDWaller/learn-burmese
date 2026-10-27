@@ -8,7 +8,11 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { generateBurmeseAudio } from "@/lib/actions";
+import {
+  burmeseAudioExists,
+  generateBurmeseAudio,
+  getBurmeseAudio,
+} from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -31,13 +35,18 @@ export default function Page({
   }
 
   async function handleListenButtonClick() {
-    const wav = await generateBurmeseAudio(id, burmese);
-
-    const audio = new Audio(
-      URL.createObjectURL(new Blob([wav], { type: "audio/wav" })),
-    );
-
-    audio.play();
+    new Audio(
+      URL.createObjectURL(
+        new Blob(
+          [
+            (await burmeseAudioExists(id))
+              ? await getBurmeseAudio(id)
+              : await generateBurmeseAudio(id, burmese),
+          ],
+          { type: "audio/wav" },
+        ),
+      ),
+    ).play();
   }
 
   function handleIncorrectButtonClick() {

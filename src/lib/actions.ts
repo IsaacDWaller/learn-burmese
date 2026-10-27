@@ -50,6 +50,28 @@ export async function generateBurmeseAudio(
   return wav;
 }
 
+export async function burmeseAudioExists(id: number) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.storage
+    .from("text-to-speech")
+    .exists(`${id}.wav`);
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getBurmeseAudio(id: number) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.storage
+    .from("text-to-speech")
+    .download(`${id}.wav`);
+
+  if (error) throw error;
+  return data;
+}
+
 function pcmToWav(pcm: Buffer): Buffer<ArrayBuffer> {
   const wav = new WaveFile();
 
