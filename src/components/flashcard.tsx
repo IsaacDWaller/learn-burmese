@@ -14,24 +14,28 @@ import {
   getBurmeseAudio,
 } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 export default function Page({
-  id,
-  english,
-  mlcts,
-  burmese,
+  term,
+  questionLanguage,
+  revealedLanguage,
+  onReveal,
 }: {
-  id: number;
-  english: string;
-  mlcts: string;
-  burmese: string;
+  term: {
+    id: number;
+    english: string;
+    mlcts: string;
+    burmese: string;
+  };
+  questionLanguage: string;
+  revealedLanguage: "english" | "burmese" | null;
+  onReveal: (newRevealedLanguage: "english" | "burmese" | null) => void;
 }) {
-  const [revealed, setRevealed] = useState(false);
+  const language = revealedLanguage ?? questionLanguage;
 
   function handleCardClick() {
-    if (revealed) return;
-    setRevealed(true);
+    if (revealedLanguage) return;
+    onReveal(questionLanguage === "english" ? "burmese" : "english");
   }
 
   async function handleListenButtonClick() {
@@ -39,9 +43,9 @@ export default function Page({
       URL.createObjectURL(
         new Blob(
           [
-            (await burmeseAudioExists(id))
-              ? await getBurmeseAudio(id)
-              : await generateBurmeseAudio(id, burmese),
+            (await burmeseAudioExists(term.id))
+              ? await getBurmeseAudio(term.id)
+              : await generateBurmeseAudio(term.id, term.burmese),
           ],
           { type: "audio/wav" },
         ),
@@ -59,7 +63,7 @@ export default function Page({
 
   return (
     <Card
-      className={cn("w-sm", !revealed && "cursor-pointer")}
+      className={cn("w-sm", !revealedLanguage && "cursor-pointer")}
       onClick={handleCardClick}
     >
       <CardHeader>
@@ -67,7 +71,9 @@ export default function Page({
           <Button
             variant="secondary"
             className={
-              revealed ? "cursor-pointer" : "pointer-events-none opacity-0"
+              language === "burmese"
+                ? "cursor-pointer"
+                : "pointer-events-none opacity-0"
             }
             onClick={handleListenButtonClick}
           >
@@ -77,19 +83,19 @@ export default function Page({
       </CardHeader>
 
       <CardContent className="flex min-h-10 flex-col items-center justify-center">
-        {!revealed ? (
-          <p>{english}</p>
+        {language === "english" ? (
+          <p>{term.english}</p>
         ) : (
           <>
-            <p>{mlcts}</p>
-            <p>{burmese}</p>
+            <p>{term.mlcts}</p>
+            <p>{term.burmese}</p>
           </>
         )}
       </CardContent>
 
       <CardFooter
         className={
-          revealed ? "justify-between" : "pointer-events-none opacity-0"
+          revealedLanguage ? "justify-between" : "pointer-events-none opacity-0"
         }
       >
         <Button

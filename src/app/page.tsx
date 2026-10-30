@@ -1,4 +1,4 @@
-import Flashcard from "@/components/flashcard";
+import FlashcardContainer from "@/components/flashcard-container";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function Page() {
@@ -10,21 +10,12 @@ export default async function Page() {
     .limit(1)
     .single();
 
-  if (error) {
-    console.error(error);
-  }
-
   return (
-    <main className="flex justify-center">
+    <main>
       {error ? (
-        <p>Failed to load term</p>
+        <p className="text-center">Failed to load term</p>
       ) : (
-        <Flashcard
-          id={term.id}
-          english={term.english}
-          mlcts={term.mlcts}
-          burmese={term.burmese}
-        />
+        <FlashcardContainer term={term} />
       )}
     </main>
   );
