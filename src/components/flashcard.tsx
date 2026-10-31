@@ -21,24 +21,24 @@ export default function Page({
   term,
   questionLanguage,
   answerLanguage,
+  onRevealAnswer,
   onAnswer,
-  onFeedback,
 }: {
   loading: boolean;
   term: Term;
   questionLanguage: string;
   answerLanguage: "english" | "burmese" | null;
-  onAnswer: (newAnswerLanguage: "english" | "burmese" | null) => void;
-  onFeedback: () => void;
+  onRevealAnswer: (answerLanguage: "english" | "burmese" | null) => void;
+  onAnswer: (correct: boolean) => void;
 }) {
   const language = answerLanguage ?? questionLanguage;
 
   function handleCardClick() {
     if (loading || answerLanguage) return;
-    onAnswer(questionLanguage === "english" ? "burmese" : "english");
+    onRevealAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
 
-  const showFeedbackButtons = !loading && answerLanguage;
+  const showAnswerButtons = !loading && answerLanguage;
 
   async function handleListenButtonClick() {
     if (loading) return;
@@ -95,11 +95,11 @@ export default function Page({
           disabled={loading}
           variant="destructive"
           className={
-            showFeedbackButtons
+            showAnswerButtons
               ? "cursor-pointer"
               : "pointer-events-none invisible"
           }
-          onClick={onFeedback}
+          onClick={() => onAnswer(false)}
         >
           Incorrect
         </Button>
@@ -107,11 +107,11 @@ export default function Page({
         <Button
           disabled={loading}
           className={
-            showFeedbackButtons
+            showAnswerButtons
               ? "cursor-pointer"
               : "pointer-events-none invisible"
           }
-          onClick={onFeedback}
+          onClick={() => onAnswer(true)}
         >
           Correct
         </Button>

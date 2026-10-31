@@ -1,8 +1,8 @@
 "use client";
 
-import { getRandomTerm } from "@/lib/flashcard-actions";
+import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
 import { Term } from "@/types/term";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Flashcard from "./flashcard";
 import FlashcardSettings from "./flashcard-settings";
 
@@ -19,20 +19,33 @@ export default function FlashcardContainer({
     "english" | "burmese" | null
   >(null);
 
+  const questionAt = useRef<number | null>(null);
+
+  useEffect(() => {
+    questionAt.current = Date.now();
+  }, [term]);
+
   async function handleQuestionLanguageChange(newQuestionLanguage: string[]) {
     if (!newQuestionLanguage.length) return;
 
     setLoading(true);
-    setAnswerLanguage(null);
+
     setQuestionLanguage(newQuestionLanguage);
+    setAnswerLanguage(null);
     setTerm(await getRandomTerm());
+
     setLoading(false);
   }
 
-  async function handleFeedback() {
+  async function handleAnswer(correct: boolean) {
+    if (!questionAt.current) throw new Error("Failed to get question time");
+
     setLoading(true);
+
+    await createAnswer(term.id, correct, Date.now() - questionAt.current);
     setAnswerLanguage(null);
     setTerm(await getRandomTerm());
+
     setLoading(false);
   }
 
@@ -49,8 +62,8 @@ export default function FlashcardContainer({
         term={term}
         questionLanguage={questionLanguage[0]}
         answerLanguage={answerLanguage}
-        onAnswer={setAnswerLanguage}
-        onFeedback={handleFeedback}
+        onRevealAnswer={setAnswerLanguage}
+        onAnswer={handleAnswer}
       />
     </div>
   );
