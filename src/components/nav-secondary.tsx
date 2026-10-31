@@ -1,5 +1,6 @@
 "use client";
 
+import { NavLink } from "@/components/nav-link";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,7 +8,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
 import * as React from "react";
 
 export function NavSecondary({
@@ -26,7 +26,7 @@ export function NavSecondary({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton render={<Link href={item.url} />}>
+              <SidebarMenuButton render={<NavLink href={item.url} />}>
                 {item.icon}
                 <span>{item.title}</span>
               </SidebarMenuButton>

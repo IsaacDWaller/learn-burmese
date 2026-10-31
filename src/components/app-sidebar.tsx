@@ -1,5 +1,6 @@
 "use client";
 
+import { NavLink } from "@/components/nav-link";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import {
@@ -18,7 +19,6 @@ import {
   Settings2Icon,
   SettingsIcon,
 } from "lucide-react";
-import Link from "next/link";
 import * as React from "react";
 
 const data = {
@@ -61,7 +61,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<Link href="/" />}
+              render={<NavLink href="/" />}
             >
               <BrainIcon className="size-5!" />
               <span className="text-base font-semibold">Learn Burmese</span>
