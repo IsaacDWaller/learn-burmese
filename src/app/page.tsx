@@ -5,9 +5,8 @@ export default async function Page() {
   const supabase = await createClient();
 
   const { data: term, error } = await supabase
-    .from("terms")
+    .rpc("get_random_term")
     .select("id, english, mlcts, burmese")
-    .limit(1)
     .single();
 
   return (
