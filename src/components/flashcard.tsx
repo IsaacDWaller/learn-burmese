@@ -12,33 +12,35 @@ import {
   burmeseAudioExists,
   generateBurmeseAudio,
   getBurmeseAudio,
-} from "@/lib/actions";
+} from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
+import { Term } from "@/types/term";
 
 export default function Page({
+  loading,
   term,
   questionLanguage,
-  revealedLanguage,
-  onReveal,
+  answerLanguage: answerLanguage,
+  onAnswer,
+  onFeedback,
 }: {
-  term: {
-    id: number;
-    english: string;
-    mlcts: string;
-    burmese: string;
-  };
+  loading: boolean;
+  term: Term;
   questionLanguage: string;
-  revealedLanguage: "english" | "burmese" | null;
-  onReveal: (newRevealedLanguage: "english" | "burmese" | null) => void;
+  answerLanguage: "english" | "burmese" | null;
+  onAnswer: (newAnswerLanguage: "english" | "burmese" | null) => void;
+  onFeedback: () => void;
 }) {
-  const language = revealedLanguage ?? questionLanguage;
+  const language = answerLanguage ?? questionLanguage;
 
   function handleCardClick() {
-    if (revealedLanguage) return;
-    onReveal(questionLanguage === "english" ? "burmese" : "english");
+    if (loading || answerLanguage) return;
+    onAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
 
   async function handleListenButtonClick() {
+    if (loading) return;
+
     new Audio(
       URL.createObjectURL(
         new Blob(
@@ -53,22 +55,15 @@ export default function Page({
     ).play();
   }
 
-  function handleIncorrectButtonClick() {
-    console.log("Incorrect button clicked");
-  }
-
-  function handleCorrectButtonClick() {
-    console.log("Correct button clicked");
-  }
-
   return (
     <Card
-      className={cn("w-sm", !revealedLanguage && "cursor-pointer")}
+      className={cn("w-sm", !loading && !answerLanguage && "cursor-pointer")}
       onClick={handleCardClick}
     >
       <CardHeader>
         <CardAction>
           <Button
+            disabled={loading}
             variant="secondary"
             className={
               language === "burmese"
@@ -93,20 +88,25 @@ export default function Page({
         )}
       </CardContent>
 
-      <CardFooter
-        className={
-          revealedLanguage ? "justify-between" : "pointer-events-none opacity-0"
-        }
-      >
+      <CardFooter className="justify-between">
         <Button
+          disabled={loading}
           variant="destructive"
-          className="cursor-pointer"
-          onClick={handleIncorrectButtonClick}
+          className={
+            answerLanguage ? "cursor-pointer" : "pointer-events-none opacity-0"
+          }
+          onClick={onFeedback}
         >
           Incorrect
         </Button>
 
-        <Button className="cursor-pointer" onClick={handleCorrectButtonClick}>
+        <Button
+          disabled={loading}
+          className={
+            answerLanguage ? "cursor-pointer" : "pointer-events-none opacity-0"
+          }
+          onClick={onFeedback}
+        >
           Correct
         </Button>
       </CardFooter>
