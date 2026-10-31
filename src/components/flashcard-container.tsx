@@ -19,15 +19,20 @@ export default function FlashcardContainer({
     "english" | "burmese" | null
   >(null);
 
-  function handleQuestionLanguageChange(newQuestionLanguage: string[]) {
+  async function handleQuestionLanguageChange(newQuestionLanguage: string[]) {
     if (!newQuestionLanguage.length) return;
+
+    setLoading(true);
+    setAnswerLanguage(null);
     setQuestionLanguage(newQuestionLanguage);
+    setTerm(await getRandomTerm());
+    setLoading(false);
   }
 
   async function handleFeedback() {
     setLoading(true);
-    setTerm(await getRandomTerm());
     setAnswerLanguage(null);
+    setTerm(await getRandomTerm());
     setLoading(false);
   }
 

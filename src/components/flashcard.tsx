@@ -20,7 +20,7 @@ export default function Page({
   loading,
   term,
   questionLanguage,
-  answerLanguage: answerLanguage,
+  answerLanguage,
   onAnswer,
   onFeedback,
 }: {
@@ -37,6 +37,8 @@ export default function Page({
     if (loading || answerLanguage) return;
     onAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
+
+  const showFeedbackButtons = !loading && answerLanguage;
 
   async function handleListenButtonClick() {
     if (loading) return;
@@ -68,7 +70,7 @@ export default function Page({
             className={
               language === "burmese"
                 ? "cursor-pointer"
-                : "pointer-events-none opacity-0"
+                : "pointer-events-none invisible"
             }
             onClick={handleListenButtonClick}
           >
@@ -93,7 +95,9 @@ export default function Page({
           disabled={loading}
           variant="destructive"
           className={
-            answerLanguage ? "cursor-pointer" : "pointer-events-none opacity-0"
+            showFeedbackButtons
+              ? "cursor-pointer"
+              : "pointer-events-none invisible"
           }
           onClick={onFeedback}
         >
@@ -103,7 +107,9 @@ export default function Page({
         <Button
           disabled={loading}
           className={
-            answerLanguage ? "cursor-pointer" : "pointer-events-none opacity-0"
+            showFeedbackButtons
+              ? "cursor-pointer"
+              : "pointer-events-none invisible"
           }
           onClick={onFeedback}
         >
