@@ -2,6 +2,8 @@
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
+const languages = ["english", "burmese"];
+
 export default function FlashcardSettings({
   disabled,
   questionLanguage,
@@ -20,13 +22,15 @@ export default function FlashcardSettings({
         value={questionLanguage}
         onValueChange={onQuestionLanguageChange}
       >
-        <ToggleGroupItem value="english" className="cursor-pointer">
-          English
-        </ToggleGroupItem>
-
-        <ToggleGroupItem value="burmese" className="cursor-pointer">
-          Burmese
-        </ToggleGroupItem>
+        {languages.map((language) => (
+          <ToggleGroupItem
+            key={language}
+            value={language}
+            className={language !== questionLanguage[0] ? "cursor-pointer" : ""}
+          >
+            {language.charAt(0).toUpperCase() + language.slice(1)}
+          </ToggleGroupItem>
+        ))}
       </ToggleGroup>
     </div>
   );
