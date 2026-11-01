@@ -15,16 +15,17 @@ import {
 } from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
 import { Term } from "@/types/term";
+import { Skeleton } from "./ui/skeleton";
 
-export default function Page({
-  loading,
+export default function Flashcard({
+  isPending,
   term,
   questionLanguage,
   answerLanguage,
   onRevealAnswer,
   onAnswer,
 }: {
-  loading: boolean;
+  isPending: boolean;
   term: Term;
   questionLanguage: string;
   answerLanguage: "english" | "burmese" | null;
@@ -34,14 +35,14 @@ export default function Page({
   const language = answerLanguage ?? questionLanguage;
 
   function handleCardClick() {
-    if (loading || answerLanguage) return;
+    if (isPending || answerLanguage) return;
     onRevealAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
 
-  const showAnswerButtons = !loading && answerLanguage;
+  const showAnswerButtons = !isPending && answerLanguage;
 
   async function handleListenButtonClick() {
-    if (loading) return;
+    if (isPending) return;
 
     new Audio(
       URL.createObjectURL(
@@ -59,13 +60,13 @@ export default function Page({
 
   return (
     <Card
-      className={cn("w-sm", !loading && !answerLanguage && "cursor-pointer")}
+      className={cn("w-sm", !isPending && !answerLanguage && "cursor-pointer")}
       onClick={handleCardClick}
     >
       <CardHeader>
         <CardAction>
           <Button
-            disabled={loading}
+            disabled={isPending}
             variant="secondary"
             className={
               language === "burmese"
@@ -80,7 +81,12 @@ export default function Page({
       </CardHeader>
 
       <CardContent className="flex min-h-10 flex-col items-center justify-center">
-        {language === "english" ? (
+        {isPending ? (
+          <>
+            <Skeleton className="h-4 w-32" />
+            {language === "english" && <Skeleton className="mt-2 h-4 w-32" />}
+          </>
+        ) : language === "english" ? (
           <p>{term.english}</p>
         ) : (
           <>
@@ -92,7 +98,7 @@ export default function Page({
 
       <CardFooter className="justify-between">
         <Button
-          disabled={loading}
+          disabled={isPending}
           variant="destructive"
           className={
             showAnswerButtons
@@ -105,7 +111,7 @@ export default function Page({
         </Button>
 
         <Button
-          disabled={loading}
+          disabled={isPending}
           className={
             showAnswerButtons
               ? "cursor-pointer"

@@ -2,7 +2,7 @@
 
 import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
 import { Term } from "@/types/term";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Flashcard from "./flashcard";
 import FlashcardSettings from "./flashcard-settings";
 
@@ -11,8 +11,10 @@ export default function FlashcardContainer({
 }: {
   initialTerm: Term;
 }) {
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
   const [term, setTerm] = useState(initialTerm);
-  const [loading, setLoading] = useState(false);
   const [questionLanguage, setQuestionLanguage] = useState(["english"]);
 
   const [answerLanguage, setAnswerLanguage] = useState<
@@ -28,37 +30,45 @@ export default function FlashcardContainer({
   async function handleQuestionLanguageChange(newQuestionLanguage: string[]) {
     if (!newQuestionLanguage.length) return;
 
-    setLoading(true);
+    startTransition(async () => {
+      setError(null);
+      setQuestionLanguage(newQuestionLanguage);
+      setAnswerLanguage(null);
 
-    setQuestionLanguage(newQuestionLanguage);
-    setAnswerLanguage(null);
-    setTerm(await getRandomTerm());
-
-    setLoading(false);
+      try {
+        setTerm(await getRandomTerm());
+      } catch {
+        setError("Failed to get term");
+      }
+    });
   }
 
   async function handleAnswer(correct: boolean) {
-    if (!questionAt.current) throw new Error("Failed to get question time");
+    startTransition(async () => {
+      if (!questionAt.current) throw new Error("Failed to get question time");
 
-    setLoading(true);
+      setError(null);
+      setAnswerLanguage(null);
 
-    await createAnswer(term.id, correct, Date.now() - questionAt.current);
-    setAnswerLanguage(null);
-    setTerm(await getRandomTerm());
-
-    setLoading(false);
+      try {
+        await createAnswer(term.id, correct, Date.now() - questionAt.current);
+        setTerm(await getRandomTerm());
+      } catch {
+        setError("Failed to create answer");
+      }
+    });
   }
 
   return (
     <div className="flex flex-col items-center">
       <FlashcardSettings
-        disabled={answerLanguage !== null}
+        disabled={isPending || answerLanguage !== null}
         questionLanguage={questionLanguage}
         onQuestionLanguageChange={handleQuestionLanguageChange}
       />
 
       <Flashcard
-        loading={loading}
+        isPending={isPending}
         term={term}
         questionLanguage={questionLanguage[0]}
         answerLanguage={answerLanguage}
