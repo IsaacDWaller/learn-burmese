@@ -69,7 +69,7 @@ export default function Flashcard({
             disabled={isPending}
             variant="secondary"
             className={
-              language === "burmese"
+              !isPending && language === "burmese"
                 ? "cursor-pointer"
                 : "pointer-events-none invisible"
             }
