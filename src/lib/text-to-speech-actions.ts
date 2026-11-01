@@ -50,15 +50,14 @@ export async function generateBurmeseAudio(
   return wav;
 }
 
-export async function burmeseAudioExists(id: number) {
+export async function burmeseAudioExists(id: number): Promise<boolean> {
   const supabase = await createClient();
 
   const { data, error } = await supabase.storage
     .from("text-to-speech")
     .exists(`${id}.wav`);
 
-  if (error) throw error;
-  return data;
+  return error ? false : data;
 }
 
 export async function getBurmeseAudio(id: number) {
