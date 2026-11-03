@@ -70,7 +70,7 @@ export default function Flashcard({
           <FlashcardButton
             disabled={isPending}
             variant="secondary"
-            visible={!isPending && Boolean(language)}
+            visible={!isPending && language === "burmese"}
             onClick={handleListenButtonClick}
           >
             <Volume2Icon />
