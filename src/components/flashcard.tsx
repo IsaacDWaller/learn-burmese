@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -18,6 +19,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   burmeseAudioExists,
   generateBurmeseAudio,
@@ -27,8 +29,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Term } from "@/types/term";
 import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
-import FlashcardButton from "./flashcard-button";
-import { Skeleton } from "./ui/skeleton";
+import { useState } from "react";
 
 export default function Flashcard({
   isPending,
@@ -45,6 +46,8 @@ export default function Flashcard({
   onRevealAnswer: (answerLanguage: "english" | "burmese" | null) => void;
   onAnswer: (correct: boolean) => void;
 }) {
+  const [listenedTermID, setListenedTermID] = useState<number | null>(null);
+
   const language = answerLanguage ?? questionLanguage;
 
   function handleCardClick() {
@@ -68,7 +71,8 @@ export default function Flashcard({
     }
 
     const audio = new Audio(`data:audio/wav;base64,${audioBase64}`);
-    audio.play();
+    await audio.play();
+    setListenedTermID(term.id);
   }
 
   return (
@@ -78,50 +82,58 @@ export default function Flashcard({
     >
       <CardHeader>
         <CardAction>
-          <FlashcardButton
+          <Button
             disabled={isPending}
             variant="secondary"
-            visible={!isPending && language === "burmese"}
+            className={
+              !isPending && language === "burmese"
+                ? "cursor-pointer"
+                : "pointer-events-none invisible"
+            }
             onClick={handleListenButtonClick}
           >
             <Volume2Icon />
             Listen
-          </FlashcardButton>
+          </Button>
 
-          <AlertDialog>
-            <AlertDialogTrigger
-              render={
-                <FlashcardButton
-                  disabled={isPending}
-                  variant="ghost"
-                  visible={!isPending && language === "burmese"}
-                >
-                  <RefreshCwIcon />
-                  Regenerate
-                </FlashcardButton>
-              }
-            />
+          {!isPending &&
+            language === "burmese" &&
+            listenedTermID === term.id && (
+              <AlertDialog>
+                <AlertDialogTrigger
+                  render={
+                    <Button
+                      disabled={isPending}
+                      variant="ghost"
+                      className="cursor-pointer"
+                    >
+                      <RefreshCwIcon />
+                      Regenerate
+                    </Button>
+                  }
+                />
 
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Replace Audio</AlertDialogTitle>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Replace Audio</AlertDialogTitle>
 
-                <AlertDialogDescription>
-                  Are you sure you want to replace the existing audio?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
+                    <AlertDialogDescription>
+                      Are you sure you want to replace the existing audio?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
 
-              <AlertDialogFooter>
-                <AlertDialogCancel className="cursor-pointer">
-                  Cancel
-                </AlertDialogCancel>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="cursor-pointer">
+                      Cancel
+                    </AlertDialogCancel>
 
-                <AlertDialogAction className="cursor-pointer">
-                  Confirm
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                    <AlertDialogAction className="cursor-pointer">
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
         </CardAction>
       </CardHeader>
 
@@ -142,24 +154,32 @@ export default function Flashcard({
       </CardContent>
 
       <CardFooter className="justify-between">
-        <FlashcardButton
+        <Button
           disabled={isPending}
           variant="destructive"
-          visible={Boolean(showAnswerButtons)}
+          className={
+            Boolean(showAnswerButtons)
+              ? "cursor-pointer"
+              : "pointer-events-none invisible"
+          }
           onClick={() => onAnswer(false)}
         >
           <XIcon />
           Incorrect
-        </FlashcardButton>
+        </Button>
 
-        <FlashcardButton
+        <Button
           disabled={isPending}
-          visible={Boolean(showAnswerButtons)}
+          className={
+            Boolean(showAnswerButtons)
+              ? "cursor-pointer"
+              : "pointer-events-none invisible"
+          }
           onClick={() => onAnswer(true)}
         >
           <CheckIcon />
           Correct
-        </FlashcardButton>
+        </Button>
       </CardFooter>
     </Card>
   );

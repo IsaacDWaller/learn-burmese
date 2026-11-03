@@ -1,10 +1,10 @@
 "use client";
 
+import Flashcard from "@/components/flashcard";
+import FlashcardSettings from "@/components/flashcard-settings";
 import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
 import { Term } from "@/types/term";
 import { useEffect, useRef, useState, useTransition } from "react";
-import Flashcard from "./flashcard";
-import FlashcardSettings from "./flashcard-settings";
 
 export default function FlashcardContainer({
   initialTerm,
