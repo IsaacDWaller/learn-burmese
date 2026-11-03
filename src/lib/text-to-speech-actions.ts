@@ -10,10 +10,7 @@ const ai = new GoogleGenAI({
   location: process.env.GOOGLE_CLOUD_LOCATION,
 });
 
-export async function generateBurmeseAudio(
-  id: number,
-  burmese: string,
-): Promise<Buffer<ArrayBuffer>> {
+export async function generateBurmeseAudio(burmese: string): Promise<string> {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash-lite-preview-tts",
     contents: burmese,
@@ -33,46 +30,11 @@ export async function generateBurmeseAudio(
   const data = response.candidates?.[0].content?.parts?.[0].inlineData?.data;
 
   if (!data) {
-    throw new Error("No data");
+    throw new Error("Failed to generate audio");
   }
 
-  const supabase = await createClient();
-  const wav = pcmToWav(Buffer.from(data, "base64"));
-
-  const { error } = await supabase.storage
-    .from("text-to-speech")
-    .upload(`${id}.wav`, wav, {
-      contentType: "audio/wav",
-    });
-
-  if (error) throw error;
-
-  return wav;
-}
-
-export async function burmeseAudioExists(id: number): Promise<boolean> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.storage
-    .from("text-to-speech")
-    .exists(`${id}.wav`);
-
-  return error ? false : data;
-}
-
-export async function getBurmeseAudio(id: number) {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.storage
-    .from("text-to-speech")
-    .download(`${id}.wav`);
-
-  if (error) throw error;
-  return data;
-}
-
-function pcmToWav(pcm: Buffer): Buffer<ArrayBuffer> {
   const wav = new WaveFile();
+  const pcm = Buffer.from(data, "base64");
 
   wav.fromScratch(
     1,
@@ -85,5 +47,40 @@ function pcmToWav(pcm: Buffer): Buffer<ArrayBuffer> {
     ),
   );
 
-  return Buffer.from(wav.toBuffer());
+  return Buffer.from(wav.toBuffer()).toString("base64");
+}
+
+export async function uploadBurmeseAudio(id: number, audioBase64: string) {
+  const supabase = await createClient();
+  const audio = Buffer.from(audioBase64, "base64");
+
+  const { error } = await supabase.storage
+    .from("text-to-speech")
+    .upload(`${id}.wav`, audio, {
+      contentType: "audio/wav",
+      upsert: true,
+    });
+
+  if (error) throw error;
+}
+
+export async function burmeseAudioExists(id: number): Promise<boolean> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.storage
+    .from("text-to-speech")
+    .exists(`${id}.wav`);
+
+  return error ? false : data;
+}
+
+export async function getBurmeseAudio(id: number): Promise<string> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.storage
+    .from("text-to-speech")
+    .download(`${id}.wav`);
+
+  if (error) throw error;
+  return Buffer.from(await data.arrayBuffer()).toString("base64");
 }

@@ -12,9 +12,11 @@ import {
   burmeseAudioExists,
   generateBurmeseAudio,
   getBurmeseAudio,
+  uploadBurmeseAudio,
 } from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
 import { Term } from "@/types/term";
+import { CheckIcon, Volume2Icon, XIcon } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 
 export default function Flashcard({
@@ -44,18 +46,18 @@ export default function Flashcard({
   async function handleListenButtonClick() {
     if (isPending) return;
 
-    new Audio(
-      URL.createObjectURL(
-        new Blob(
-          [
-            (await burmeseAudioExists(term.id))
-              ? await getBurmeseAudio(term.id)
-              : await generateBurmeseAudio(term.id, term.burmese),
-          ],
-          { type: "audio/wav" },
-        ),
-      ),
-    ).play();
+    const audioExists = await burmeseAudioExists(term.id);
+
+    const audioBase64 = audioExists
+      ? await getBurmeseAudio(term.id)
+      : await generateBurmeseAudio(term.burmese);
+
+    if (!audioExists) {
+      await uploadBurmeseAudio(term.id, audioBase64);
+    }
+
+    const audio = new Audio(`data:audio/wav;base64,${audioBase64}`);
+    audio.play();
   }
 
   return (
@@ -75,6 +77,7 @@ export default function Flashcard({
             }
             onClick={handleListenButtonClick}
           >
+            <Volume2Icon />
             Listen
           </Button>
         </CardAction>
@@ -107,6 +110,7 @@ export default function Flashcard({
           }
           onClick={() => onAnswer(false)}
         >
+          <XIcon />
           Incorrect
         </Button>
 
@@ -119,6 +123,7 @@ export default function Flashcard({
           }
           onClick={() => onAnswer(true)}
         >
+          <CheckIcon />
           Correct
         </Button>
       </CardFooter>
