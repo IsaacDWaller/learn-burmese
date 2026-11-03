@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -17,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Term } from "@/types/term";
 import { CheckIcon, Volume2Icon, XIcon } from "lucide-react";
+import FlashcardButton from "./flashcard-button";
 import { Skeleton } from "./ui/skeleton";
 
 export default function Flashcard({
@@ -67,19 +67,15 @@ export default function Flashcard({
     >
       <CardHeader>
         <CardAction>
-          <Button
+          <FlashcardButton
             disabled={isPending}
             variant="secondary"
-            className={
-              !isPending && language === "burmese"
-                ? "cursor-pointer"
-                : "pointer-events-none invisible"
-            }
+            visible={!isPending && Boolean(language)}
             onClick={handleListenButtonClick}
           >
             <Volume2Icon />
             Listen
-          </Button>
+          </FlashcardButton>
         </CardAction>
       </CardHeader>
 
@@ -100,32 +96,24 @@ export default function Flashcard({
       </CardContent>
 
       <CardFooter className="justify-between">
-        <Button
+        <FlashcardButton
           disabled={isPending}
           variant="destructive"
-          className={
-            showAnswerButtons
-              ? "cursor-pointer"
-              : "pointer-events-none invisible"
-          }
+          visible={Boolean(showAnswerButtons)}
           onClick={() => onAnswer(false)}
         >
           <XIcon />
           Incorrect
-        </Button>
+        </FlashcardButton>
 
-        <Button
+        <FlashcardButton
           disabled={isPending}
-          className={
-            showAnswerButtons
-              ? "cursor-pointer"
-              : "pointer-events-none invisible"
-          }
+          visible={Boolean(showAnswerButtons)}
           onClick={() => onAnswer(true)}
         >
           <CheckIcon />
           Correct
-        </Button>
+        </FlashcardButton>
       </CardFooter>
     </Card>
   );
