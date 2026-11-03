@@ -1,6 +1,17 @@
 "use client";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Card,
   CardAction,
   CardContent,
@@ -15,7 +26,7 @@ import {
 } from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
 import { Term } from "@/types/term";
-import { CheckIcon, Volume2Icon, XIcon } from "lucide-react";
+import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import FlashcardButton from "./flashcard-button";
 import { Skeleton } from "./ui/skeleton";
 
@@ -76,6 +87,41 @@ export default function Flashcard({
             <Volume2Icon />
             Listen
           </FlashcardButton>
+
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <FlashcardButton
+                  disabled={isPending}
+                  variant="ghost"
+                  visible={!isPending && language === "burmese"}
+                >
+                  <RefreshCwIcon />
+                  Regenerate
+                </FlashcardButton>
+              }
+            />
+
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Replace Audio</AlertDialogTitle>
+
+                <AlertDialogDescription>
+                  Are you sure you want to replace the existing audio?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel className="cursor-pointer">
+                  Cancel
+                </AlertDialogCancel>
+
+                <AlertDialogAction className="cursor-pointer">
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardAction>
       </CardHeader>
 
