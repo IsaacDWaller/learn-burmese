@@ -2,52 +2,36 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { GoogleGenAI } from "@google/genai";
-import { WaveFile } from "wavefile";
 
-const ai = new GoogleGenAI({
-  vertexai: true,
-  project: process.env.GOOGLE_CLOUD_PROJECT,
-  location: process.env.GOOGLE_CLOUD_LOCATION,
+const client = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 export async function generateBurmeseAudio(burmese: string): Promise<string> {
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite-preview-tts",
-    contents: burmese,
-    config: {
-      responseModalities: ["AUDIO"],
-      speechConfig: {
-        languageCode: "my-MM",
-        voiceConfig: {
-          prebuiltVoiceConfig: {
-            voiceName: "Achernar",
+  const interaction = await client.interactions.create({
+    model: "gemini-3.8-flash-tts",
+    input: [
+      {
+        type: "user_input",
+        content: [
+          {
+            type: "text",
+            text: burmese,
           },
-        },
+        ],
       },
+    ],
+    response_format: { type: "audio" },
+    generation_config: {
+      speech_config: [{ voice: "Zephyr" }],
     },
   });
 
-  const data = response.candidates?.[0].content?.parts?.[0].inlineData?.data;
-
-  if (!data) {
+  if (!interaction.output_audio?.data) {
     throw new Error("Failed to generate audio");
   }
 
-  const wav = new WaveFile();
-  const pcm = Buffer.from(data, "base64");
-
-  wav.fromScratch(
-    1,
-    24_000,
-    "16",
-    new Int16Array(
-      pcm.buffer,
-      pcm.byteOffset,
-      pcm.byteLength / Int16Array.BYTES_PER_ELEMENT,
-    ),
-  );
-
-  return Buffer.from(wav.toBuffer()).toString("base64");
+  return interaction.output_audio.data;
 }
 
 export async function uploadBurmeseAudio(id: number, audioBase64: string) {
