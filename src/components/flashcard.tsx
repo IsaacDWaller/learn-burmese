@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingIcon from "@/components/loading-icon";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,13 +31,7 @@ import { cn } from "@/lib/utils";
 import type { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
-import {
-  CheckIcon,
-  Loader2Icon,
-  RefreshCwIcon,
-  Volume2Icon,
-  XIcon,
-} from "lucide-react";
+import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function Flashcard({
@@ -118,11 +113,7 @@ export default function Flashcard({
             }
             onClick={handleListenButtonClick}
           >
-            {audioLoading ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              <Volume2Icon />
-            )}
+            {audioLoading ? <LoadingIcon /> : <Volume2Icon />}
             Listen
           </Button>
 
@@ -195,11 +186,7 @@ export default function Flashcard({
           }
           onClick={() => onAnswer(false)}
         >
-          {creatingAnswer === "incorrect" ? (
-            <Loader2Icon className="animate-spin" />
-          ) : (
-            <XIcon />
-          )}
+          {creatingAnswer === "incorrect" ? <LoadingIcon /> : <XIcon />}
           Incorrect
         </Button>
 
@@ -212,11 +199,7 @@ export default function Flashcard({
           }
           onClick={() => onAnswer(true)}
         >
-          {creatingAnswer === "correct" ? (
-            <Loader2Icon className="animate-spin" />
-          ) : (
-            <CheckIcon />
-          )}
+          {creatingAnswer === "correct" ? <LoadingIcon /> : <CheckIcon />}
           Correct
         </Button>
       </CardFooter>
