@@ -13,8 +13,6 @@ export default function FlashcardContainer({
   initialTerm: Term;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-
   const [term, setTerm] = useState(initialTerm);
   const [questionLanguage, setQuestionLanguage] = useState(["english"]);
   const [answerLanguage, setAnswerLanguage] = useState<AnswerLanguage>(null);
@@ -29,14 +27,13 @@ export default function FlashcardContainer({
     if (!newQuestionLanguage.length) return;
 
     startTransition(async () => {
-      setError(null);
       setQuestionLanguage(newQuestionLanguage);
       setAnswerLanguage(null);
 
       try {
         setTerm(await getRandomTerm());
       } catch {
-        setError("Failed to get term");
+        console.error("Failed to get term");
       }
     });
   }
@@ -44,15 +41,13 @@ export default function FlashcardContainer({
   async function handleAnswer(correct: boolean) {
     startTransition(async () => {
       if (!questionAt.current) throw new Error("Failed to get question time");
-
-      setError(null);
       setAnswerLanguage(null);
 
       try {
         await createAnswer(term.id, correct, Date.now() - questionAt.current);
         setTerm(await getRandomTerm());
       } catch {
-        setError("Failed to create answer");
+        console.error("Failed to create answer");
       }
     });
   }
