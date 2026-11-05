@@ -65,7 +65,11 @@ export default function Flashcard({
 
   const showAnswerButtons = !isPending && answerLanguage;
 
-  async function handleListenButtonClick() {
+  async function handleListenButtonClick(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) {
+    event.stopPropagation();
+
     if (isPending || audioLoading) return;
 
     setAudioLoading(true);
