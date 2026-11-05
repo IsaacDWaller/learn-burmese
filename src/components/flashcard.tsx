@@ -29,7 +29,13 @@ import {
 import { cn } from "@/lib/utils";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
-import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
+import {
+  CheckIcon,
+  Loader2Icon,
+  RefreshCwIcon,
+  Volume2Icon,
+  XIcon,
+} from "lucide-react";
 import { useState } from "react";
 
 export default function Flashcard({
@@ -47,33 +53,42 @@ export default function Flashcard({
   onRevealAnswer: (answerLanguage: AnswerLanguage) => void;
   onAnswer: (correct: boolean) => void;
 }) {
+  const [audioLoading, setAudioLoading] = useState(false);
   const [listenedTermID, setListenedTermID] = useState<number | null>(null);
 
   const language = answerLanguage ?? questionLanguage;
 
   function handleCardClick() {
-    if (isPending || answerLanguage) return;
+    if (isPending || audioLoading || answerLanguage) return;
     onRevealAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
 
   const showAnswerButtons = !isPending && answerLanguage;
 
   async function handleListenButtonClick() {
-    if (isPending) return;
+    if (isPending || audioLoading) return;
 
-    const audioExists = await burmeseAudioExists(term.id);
+    setAudioLoading(true);
 
-    const audioBase64 = audioExists
-      ? await getBurmeseAudio(term.id)
-      : await generateBurmeseAudio(term.burmese);
+    try {
+      const audioExists = await burmeseAudioExists(term.id);
 
-    if (!audioExists) {
-      await uploadBurmeseAudio(term.id, audioBase64);
+      const audioBase64 = audioExists
+        ? await getBurmeseAudio(term.id)
+        : await generateBurmeseAudio(term.burmese);
+
+      if (!audioExists) {
+        await uploadBurmeseAudio(term.id, audioBase64);
+      }
+
+      const audio = new Audio(`data:audio/wav;base64,${audioBase64}`);
+      await audio.play();
+      setListenedTermID(term.id);
+    } catch {
+      console.error("Failed to load audio");
+    } finally {
+      setAudioLoading(false);
     }
-
-    const audio = new Audio(`data:audio/wav;base64,${audioBase64}`);
-    await audio.play();
-    setListenedTermID(term.id);
   }
 
   return (
@@ -84,7 +99,7 @@ export default function Flashcard({
       <CardHeader>
         <CardAction>
           <Button
-            disabled={isPending}
+            disabled={isPending || audioLoading}
             variant="secondary"
             className={
               !isPending && language === "burmese"
@@ -93,7 +108,11 @@ export default function Flashcard({
             }
             onClick={handleListenButtonClick}
           >
-            <Volume2Icon />
+            {audioLoading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <Volume2Icon />
+            )}
             Listen
           </Button>
 
@@ -104,7 +123,7 @@ export default function Flashcard({
                 <AlertDialogTrigger
                   render={
                     <Button
-                      disabled={isPending}
+                      disabled={isPending || audioLoading}
                       variant="ghost"
                       className="cursor-pointer"
                     >
@@ -156,7 +175,7 @@ export default function Flashcard({
 
       <CardFooter className="justify-between">
         <Button
-          disabled={isPending}
+          disabled={isPending || audioLoading}
           variant="destructive"
           className={
             Boolean(showAnswerButtons)
@@ -170,7 +189,7 @@ export default function Flashcard({
         </Button>
 
         <Button
-          disabled={isPending}
+          disabled={isPending || audioLoading}
           className={
             Boolean(showAnswerButtons)
               ? "cursor-pointer"
