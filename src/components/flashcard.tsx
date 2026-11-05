@@ -27,6 +27,7 @@ import {
   uploadBurmeseAudio,
 } from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
+import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
@@ -42,8 +43,8 @@ export default function Flashcard({
   isPending: boolean;
   term: Term;
   questionLanguage: string;
-  answerLanguage: "english" | "burmese" | null;
-  onRevealAnswer: (answerLanguage: "english" | "burmese" | null) => void;
+  answerLanguage: AnswerLanguage;
+  onRevealAnswer: (answerLanguage: AnswerLanguage) => void;
   onAnswer: (correct: boolean) => void;
 }) {
   const [listenedTermID, setListenedTermID] = useState<number | null>(null);

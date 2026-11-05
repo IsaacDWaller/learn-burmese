@@ -3,6 +3,7 @@
 import Flashcard from "@/components/flashcard";
 import FlashcardSettings from "@/components/flashcard-settings";
 import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
+import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { useEffect, useRef, useState, useTransition } from "react";
 
@@ -16,10 +17,7 @@ export default function FlashcardContainer({
 
   const [term, setTerm] = useState(initialTerm);
   const [questionLanguage, setQuestionLanguage] = useState(["english"]);
-
-  const [answerLanguage, setAnswerLanguage] = useState<
-    "english" | "burmese" | null
-  >(null);
+  const [answerLanguage, setAnswerLanguage] = useState<AnswerLanguage>(null);
 
   const questionAt = useRef<number | null>(null);
 
