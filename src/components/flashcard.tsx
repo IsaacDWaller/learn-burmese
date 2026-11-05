@@ -27,6 +27,7 @@ import {
   uploadBurmeseAudio,
 } from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
+import type { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import {
@@ -43,6 +44,7 @@ export default function Flashcard({
   term,
   questionLanguage,
   answerLanguage,
+  creatingAnswer,
   onRevealAnswer,
   onAnswer,
 }: {
@@ -50,6 +52,7 @@ export default function Flashcard({
   term: Term;
   questionLanguage: string;
   answerLanguage: AnswerLanguage;
+  creatingAnswer: Answer;
   onRevealAnswer: (answerLanguage: AnswerLanguage) => void;
   onAnswer: (correct: boolean) => void;
 }) {
@@ -57,20 +60,20 @@ export default function Flashcard({
   const [listenedTermID, setListenedTermID] = useState<number | null>(null);
 
   const language = answerLanguage ?? questionLanguage;
+  const showAnswerButtons = !isPending && answerLanguage;
 
   function handleCardClick() {
-    if (isPending || audioLoading || answerLanguage) return;
+    if (isPending || audioLoading || creatingAnswer || answerLanguage) return;
+
     onRevealAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
-
-  const showAnswerButtons = !isPending && answerLanguage;
 
   async function handleListenButtonClick(
     event: React.MouseEvent<HTMLButtonElement>,
   ) {
     event.stopPropagation();
 
-    if (isPending || audioLoading) return;
+    if (isPending || audioLoading || creatingAnswer) return;
 
     setAudioLoading(true);
 
@@ -97,13 +100,16 @@ export default function Flashcard({
 
   return (
     <Card
-      className={cn("w-sm", !isPending && !answerLanguage && "cursor-pointer")}
+      className={cn(
+        "w-sm",
+        !isPending && !creatingAnswer && !answerLanguage && "cursor-pointer",
+      )}
       onClick={handleCardClick}
     >
       <CardHeader>
         <CardAction>
           <Button
-            disabled={isPending || audioLoading}
+            disabled={isPending || Boolean(creatingAnswer) || audioLoading}
             variant="secondary"
             className={
               !isPending && language === "burmese"
@@ -121,13 +127,14 @@ export default function Flashcard({
           </Button>
 
           {!isPending &&
+            !creatingAnswer &&
             language === "burmese" &&
             listenedTermID === term.id && (
               <AlertDialog>
                 <AlertDialogTrigger
                   render={
                     <Button
-                      disabled={isPending || audioLoading}
+                      disabled={isPending || creatingAnswer || audioLoading}
                       variant="ghost"
                       className="cursor-pointer"
                     >
@@ -179,7 +186,7 @@ export default function Flashcard({
 
       <CardFooter className="justify-between">
         <Button
-          disabled={isPending || audioLoading}
+          disabled={isPending || Boolean(creatingAnswer) || audioLoading}
           variant="destructive"
           className={
             Boolean(showAnswerButtons)
@@ -188,12 +195,16 @@ export default function Flashcard({
           }
           onClick={() => onAnswer(false)}
         >
-          <XIcon />
+          {creatingAnswer === "incorrect" ? (
+            <Loader2Icon className="animate-spin" />
+          ) : (
+            <XIcon />
+          )}
           Incorrect
         </Button>
 
         <Button
-          disabled={isPending || audioLoading}
+          disabled={isPending || Boolean(creatingAnswer) || audioLoading}
           className={
             Boolean(showAnswerButtons)
               ? "cursor-pointer"
@@ -201,7 +212,11 @@ export default function Flashcard({
           }
           onClick={() => onAnswer(true)}
         >
-          <CheckIcon />
+          {creatingAnswer === "correct" ? (
+            <Loader2Icon className="animate-spin" />
+          ) : (
+            <CheckIcon />
+          )}
           Correct
         </Button>
       </CardFooter>

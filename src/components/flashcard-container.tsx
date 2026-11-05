@@ -3,6 +3,7 @@
 import Flashcard from "@/components/flashcard";
 import FlashcardSettings from "@/components/flashcard-settings";
 import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
+import { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -13,6 +14,8 @@ export default function FlashcardContainer({
   initialTerm: Term;
 }) {
   const [isPending, startTransition] = useTransition();
+  const [creatingAnswer, setCreatingAnswer] = useState<Answer>(null);
+
   const [term, setTerm] = useState(initialTerm);
   const [questionLanguage, setQuestionLanguage] = useState(["english"]);
   const [answerLanguage, setAnswerLanguage] = useState<AnswerLanguage>(null);
@@ -39,17 +42,19 @@ export default function FlashcardContainer({
   }
 
   async function handleAnswer(correct: boolean) {
-    startTransition(async () => {
-      if (!questionAt.current) throw new Error("Failed to get question time");
-      setAnswerLanguage(null);
+    if (!questionAt.current) throw new Error("Failed to get question time");
 
-      try {
-        await createAnswer(term.id, correct, Date.now() - questionAt.current);
-        setTerm(await getRandomTerm());
-      } catch {
-        console.error("Failed to create answer");
-      }
-    });
+    setAnswerLanguage(null);
+    setCreatingAnswer(correct ? "correct" : "incorrect");
+
+    try {
+      await createAnswer(term.id, correct, Date.now() - questionAt.current);
+      setTerm(await getRandomTerm());
+    } catch {
+      console.error("Failed to create answer");
+    } finally {
+      setCreatingAnswer(null);
+    }
   }
 
   return (
@@ -65,6 +70,7 @@ export default function FlashcardContainer({
         term={term}
         questionLanguage={questionLanguage[0]}
         answerLanguage={answerLanguage}
+        creatingAnswer={creatingAnswer}
         onRevealAnswer={setAnswerLanguage}
         onAnswer={handleAnswer}
       />
