@@ -6,14 +6,14 @@ import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
 import { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function FlashcardContainer({
   initialTerm,
 }: {
   initialTerm: Term;
 }) {
-  const [isPending, startTransition] = useTransition();
+  const [changingLanguage, setChangingLanguage] = useState(false);
   const [creatingAnswer, setCreatingAnswer] = useState<Answer>(null);
 
   const [term, setTerm] = useState(initialTerm);
@@ -29,16 +29,17 @@ export default function FlashcardContainer({
   async function handleQuestionLanguageChange(newQuestionLanguage: string[]) {
     if (!newQuestionLanguage.length) return;
 
-    startTransition(async () => {
-      setQuestionLanguage(newQuestionLanguage);
-      setAnswerLanguage(null);
+    setChangingLanguage(true);
+    setQuestionLanguage(newQuestionLanguage);
+    setAnswerLanguage(null);
 
-      try {
-        setTerm(await getRandomTerm());
-      } catch {
-        console.error("Failed to get term");
-      }
-    });
+    try {
+      setTerm(await getRandomTerm());
+    } catch {
+      console.error("Failed to get term");
+    } finally {
+      setChangingLanguage(false);
+    }
   }
 
   async function handleAnswer(correct: boolean) {
@@ -60,13 +61,13 @@ export default function FlashcardContainer({
   return (
     <div className="flex flex-col items-center">
       <FlashcardSettings
-        disabled={isPending || answerLanguage !== null}
+        disabled={changingLanguage || answerLanguage !== null}
         questionLanguage={questionLanguage}
         onQuestionLanguageChange={handleQuestionLanguageChange}
       />
 
       <Flashcard
-        isPending={isPending}
+        isPending={changingLanguage}
         term={term}
         questionLanguage={questionLanguage[0]}
         answerLanguage={answerLanguage}
