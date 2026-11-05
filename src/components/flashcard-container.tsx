@@ -14,7 +14,7 @@ export default function FlashcardContainer({
   initialTerm: Term;
 }) {
   const [changingLanguage, setChangingLanguage] = useState(false);
-  const [creatingAnswer, setCreatingAnswer] = useState<Answer>(null);
+  const [submittingAnswer, setSubmittingAnswer] = useState<Answer>(null);
 
   const [term, setTerm] = useState(initialTerm);
   const [questionLanguage, setQuestionLanguage] = useState(["english"]);
@@ -42,19 +42,19 @@ export default function FlashcardContainer({
     }
   }
 
-  async function handleAnswer(correct: boolean) {
+  async function handleSubmitAnswer(correct: boolean) {
     if (!questionAt.current) throw new Error("Failed to get question time");
 
     setAnswerLanguage(null);
-    setCreatingAnswer(correct ? "correct" : "incorrect");
+    setSubmittingAnswer(correct ? "correct" : "incorrect");
 
     try {
       await createAnswer(term.id, correct, Date.now() - questionAt.current);
       setTerm(await getRandomTerm());
     } catch {
-      console.error("Failed to create answer");
+      console.error("Failed to submit answer");
     } finally {
-      setCreatingAnswer(null);
+      setSubmittingAnswer(null);
     }
   }
 
@@ -71,9 +71,9 @@ export default function FlashcardContainer({
         term={term}
         questionLanguage={questionLanguage[0]}
         answerLanguage={answerLanguage}
-        creatingAnswer={creatingAnswer}
+        submittingAnswer={submittingAnswer}
         onRevealAnswer={setAnswerLanguage}
-        onAnswer={handleAnswer}
+        onAnswer={handleSubmitAnswer}
       />
     </div>
   );
