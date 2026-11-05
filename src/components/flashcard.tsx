@@ -159,7 +159,7 @@ export default function Flashcard({
         </CardAction>
       </CardHeader>
 
-      <CardContent className="flex min-h-10 flex-col items-center justify-center">
+      <CardContent className="flex min-h-16 flex-col items-center justify-center">
         {isPending ? (
           <>
             <Skeleton className="h-4 w-32" />
