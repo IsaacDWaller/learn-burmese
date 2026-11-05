@@ -35,18 +35,18 @@ import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function Flashcard({
-  isPending,
   term,
   questionLanguage,
   answerLanguage,
+  changingQuestionLanguage,
   submittingAnswer,
   onRevealAnswer,
   onAnswer,
 }: {
-  isPending: boolean;
   term: Term;
   questionLanguage: string;
   answerLanguage: AnswerLanguage;
+  changingQuestionLanguage: boolean;
   submittingAnswer: Answer;
   onRevealAnswer: (answerLanguage: AnswerLanguage) => void;
   onAnswer: (correct: boolean) => void;
@@ -55,10 +55,16 @@ export default function Flashcard({
   const [listenedTermID, setListenedTermID] = useState<number | null>(null);
 
   const language = answerLanguage ?? questionLanguage;
-  const showAnswerButtons = !isPending && answerLanguage;
+  const showAnswerButtons = !changingQuestionLanguage && answerLanguage;
 
   function handleCardClick() {
-    if (isPending || audioLoading || submittingAnswer || answerLanguage) return;
+    if (
+      changingQuestionLanguage ||
+      audioLoading ||
+      submittingAnswer ||
+      answerLanguage
+    )
+      return;
 
     onRevealAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
@@ -68,7 +74,7 @@ export default function Flashcard({
   ) {
     event.stopPropagation();
 
-    if (isPending || audioLoading || submittingAnswer) return;
+    if (changingQuestionLanguage || audioLoading || submittingAnswer) return;
 
     setAudioLoading(true);
 
@@ -97,17 +103,24 @@ export default function Flashcard({
     <Card
       className={cn(
         "w-sm",
-        !isPending && !submittingAnswer && !answerLanguage && "cursor-pointer",
+        !changingQuestionLanguage &&
+          !submittingAnswer &&
+          !answerLanguage &&
+          "cursor-pointer",
       )}
       onClick={handleCardClick}
     >
       <CardHeader>
         <CardAction>
           <Button
-            disabled={isPending || Boolean(submittingAnswer) || audioLoading}
+            disabled={
+              changingQuestionLanguage ||
+              Boolean(submittingAnswer) ||
+              audioLoading
+            }
             variant="secondary"
             className={
-              !isPending && language === "burmese"
+              !changingQuestionLanguage && language === "burmese"
                 ? "cursor-pointer"
                 : "pointer-events-none invisible"
             }
@@ -117,7 +130,7 @@ export default function Flashcard({
             Listen
           </Button>
 
-          {!isPending &&
+          {!changingQuestionLanguage &&
             !submittingAnswer &&
             language === "burmese" &&
             listenedTermID === term.id && (
@@ -125,7 +138,11 @@ export default function Flashcard({
                 <AlertDialogTrigger
                   render={
                     <Button
-                      disabled={isPending || submittingAnswer || audioLoading}
+                      disabled={
+                        changingQuestionLanguage ||
+                        submittingAnswer ||
+                        audioLoading
+                      }
                       variant="ghost"
                       className="cursor-pointer"
                     >
@@ -160,7 +177,7 @@ export default function Flashcard({
       </CardHeader>
 
       <CardContent className="flex min-h-16 flex-col items-center justify-center">
-        {isPending ? (
+        {changingQuestionLanguage ? (
           <>
             <Skeleton className="h-4 w-32" />
             {language === "english" && <Skeleton className="mt-2 h-4 w-32" />}
@@ -177,7 +194,11 @@ export default function Flashcard({
 
       <CardFooter className="justify-between">
         <Button
-          disabled={isPending || Boolean(submittingAnswer) || audioLoading}
+          disabled={
+            changingQuestionLanguage ||
+            Boolean(submittingAnswer) ||
+            audioLoading
+          }
           variant="destructive"
           className={
             Boolean(showAnswerButtons)
@@ -191,7 +212,11 @@ export default function Flashcard({
         </Button>
 
         <Button
-          disabled={isPending || Boolean(submittingAnswer) || audioLoading}
+          disabled={
+            changingQuestionLanguage ||
+            Boolean(submittingAnswer) ||
+            audioLoading
+          }
           className={
             Boolean(showAnswerButtons)
               ? "cursor-pointer"

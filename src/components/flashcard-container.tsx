@@ -13,7 +13,9 @@ export default function FlashcardContainer({
 }: {
   initialTerm: Term;
 }) {
-  const [changingLanguage, setChangingLanguage] = useState(false);
+  const [changingQuestionLanguage, setChangingQuestionLanguage] =
+    useState(false);
+
   const [submittingAnswer, setSubmittingAnswer] = useState<Answer>(null);
 
   const [term, setTerm] = useState(initialTerm);
@@ -29,7 +31,7 @@ export default function FlashcardContainer({
   async function handleQuestionLanguageChange(newQuestionLanguage: string[]) {
     if (!newQuestionLanguage.length) return;
 
-    setChangingLanguage(true);
+    setChangingQuestionLanguage(true);
     setQuestionLanguage(newQuestionLanguage);
     setAnswerLanguage(null);
 
@@ -38,7 +40,7 @@ export default function FlashcardContainer({
     } catch {
       console.error("Failed to get term");
     } finally {
-      setChangingLanguage(false);
+      setChangingQuestionLanguage(false);
     }
   }
 
@@ -61,16 +63,16 @@ export default function FlashcardContainer({
   return (
     <div className="flex flex-col items-center">
       <FlashcardSettings
-        disabled={changingLanguage || answerLanguage !== null}
+        disabled={changingQuestionLanguage || answerLanguage !== null}
         questionLanguage={questionLanguage}
         onQuestionLanguageChange={handleQuestionLanguageChange}
       />
 
       <Flashcard
-        isPending={changingLanguage}
         term={term}
         questionLanguage={questionLanguage[0]}
         answerLanguage={answerLanguage}
+        changingQuestionLanguage={changingQuestionLanguage}
         submittingAnswer={submittingAnswer}
         onRevealAnswer={setAnswerLanguage}
         onAnswer={handleSubmitAnswer}
