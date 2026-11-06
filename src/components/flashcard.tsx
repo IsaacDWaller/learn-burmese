@@ -1,6 +1,5 @@
 "use client";
 
-import LoadingIcon from "@/components/loading-icon";
 import RegenerateDialogItem from "@/components/regenerate-dialog-item";
 import {
   AlertDialog,
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/card";
 import { ItemGroup } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import {
   burmeseAudioExists,
   generateBurmeseAudio,
@@ -151,7 +151,7 @@ export default function Flashcard({
               }
               onClick={handleListenButtonClick}
             >
-              {loadingAudio ? <LoadingIcon /> : <Volume2Icon />}
+              {loadingAudio ? <Spinner /> : <Volume2Icon />}
               Listen
             </Button>
 
@@ -170,7 +170,7 @@ export default function Flashcard({
                   className="cursor-pointer"
                   onClick={handleRegenerateButtonClick}
                 >
-                  {regeneratingAudio ? <LoadingIcon /> : <RefreshCwIcon />}
+                  {regeneratingAudio ? <Spinner /> : <RefreshCwIcon />}
                   Regenerate
                 </Button>
               )}
@@ -209,7 +209,7 @@ export default function Flashcard({
             }
             onClick={() => onAnswer(false)}
           >
-            {submittingAnswer === "incorrect" ? <LoadingIcon /> : <XIcon />}
+            {submittingAnswer === "incorrect" ? <Spinner /> : <XIcon />}
             Incorrect
           </Button>
 
@@ -227,7 +227,7 @@ export default function Flashcard({
             }
             onClick={() => onAnswer(true)}
           >
-            {submittingAnswer === "correct" ? <LoadingIcon /> : <CheckIcon />}
+            {submittingAnswer === "correct" ? <Spinner /> : <CheckIcon />}
             Correct
           </Button>
         </CardFooter>
