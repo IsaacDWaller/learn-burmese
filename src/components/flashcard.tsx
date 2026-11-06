@@ -23,10 +23,10 @@ import { ItemGroup } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import {
-  burmeseAudioExists,
-  generateBurmeseAudio,
-  getBurmeseAudio,
-  uploadBurmeseAudio,
+  audioExists,
+  generateAudio,
+  getAudio,
+  uploadAudio,
 } from "@/lib/text-to-speech-actions";
 import { cn } from "@/lib/utils";
 import type { Answer } from "@/types/answer";
@@ -84,14 +84,14 @@ export default function Flashcard({
     setLoadingAudio(true);
 
     try {
-      const audioExists = await burmeseAudioExists(term.id);
+      const burmeseAudioExists = await audioExists(term.id);
 
-      const audioBase64 = audioExists
-        ? await getBurmeseAudio(term.id)
-        : await generateBurmeseAudio(term.burmese);
+      const audioBase64 = burmeseAudioExists
+        ? await getAudio(term.id)
+        : await generateAudio(term.burmese);
 
-      if (!audioExists) {
-        await uploadBurmeseAudio(term.id, audioBase64);
+      if (!burmeseAudioExists) {
+        await uploadAudio(term.id, audioBase64);
       }
 
       const audio = new Audio(`data:audio/wav;base64,${audioBase64}`);

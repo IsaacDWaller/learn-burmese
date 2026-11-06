@@ -7,7 +7,7 @@ const client = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-export async function generateBurmeseAudio(burmese: string): Promise<string> {
+export async function generateAudio(burmese: string): Promise<string> {
   const interaction = await client.interactions.create({
     model: "gemini-3.8-flash-tts",
     input: [
@@ -34,7 +34,7 @@ export async function generateBurmeseAudio(burmese: string): Promise<string> {
   return interaction.output_audio.data;
 }
 
-export async function uploadBurmeseAudio(id: number, audioBase64: string) {
+export async function uploadAudio(id: number, audioBase64: string) {
   const supabase = await createClient();
   const audio = Buffer.from(audioBase64, "base64");
 
@@ -48,7 +48,7 @@ export async function uploadBurmeseAudio(id: number, audioBase64: string) {
   if (error) throw error;
 }
 
-export async function burmeseAudioExists(id: number): Promise<boolean> {
+export async function audioExists(id: number): Promise<boolean> {
   const supabase = await createClient();
 
   const { data, error } = await supabase.storage
@@ -58,7 +58,7 @@ export async function burmeseAudioExists(id: number): Promise<boolean> {
   return error ? false : data;
 }
 
-export async function getBurmeseAudio(id: number): Promise<string> {
+export async function getAudio(id: number): Promise<string> {
   const supabase = await createClient();
 
   const { data, error } = await supabase.storage
