@@ -1,17 +1,6 @@
 "use client";
 
 import LoadingIcon from "@/components/loading-icon";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,6 +22,18 @@ import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
+import RegenerateDialogItem from "./regenerate-dialog-item";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
+import { ItemGroup } from "./ui/item";
 
 export default function Flashcard({
   term,
@@ -52,7 +53,12 @@ export default function Flashcard({
   onAnswer: (correct: boolean) => void;
 }) {
   const [audioLoading, setAudioLoading] = useState(false);
+  const [loadedAudio, setLoadedAudio] = useState<string | null>(null);
   const [listenedTermID, setListenedTermID] = useState<number | null>(null);
+
+  const [regeneratingAudio, setRegeneratingAudio] = useState(false);
+  const [regeneratedAudio, setRegeneratedAudio] = useState<string | null>(null);
+  const [regenerateDialogOpen, setRegenerateDialogOpen] = useState(false);
 
   const language = answerLanguage ?? questionLanguage;
   const showAnswerButtons = !changingQuestionLanguage && answerLanguage;
@@ -60,9 +66,10 @@ export default function Flashcard({
   function handleCardClick() {
     if (
       changingQuestionLanguage ||
+      answerLanguage ||
       audioLoading ||
-      submittingAnswer ||
-      answerLanguage
+      regeneratingAudio ||
+      submittingAnswer
     )
       return;
 
@@ -73,8 +80,6 @@ export default function Flashcard({
     event: React.MouseEvent<HTMLButtonElement>,
   ) {
     event.stopPropagation();
-
-    if (changingQuestionLanguage || audioLoading || submittingAnswer) return;
 
     setAudioLoading(true);
 
@@ -90,6 +95,7 @@ export default function Flashcard({
       }
 
       const audio = new Audio(`data:audio/wav;base64,${audioBase64}`);
+      setLoadedAudio(audioBase64);
       await audio.play();
       setListenedTermID(term.id);
     } catch {
@@ -99,135 +105,172 @@ export default function Flashcard({
     }
   }
 
+  async function handleRegenerateButtonClick(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) {
+    event.stopPropagation();
+
+    setRegeneratingAudio(true);
+
+    try {
+      // setRegeneratedAudio(await generateBurmeseAudio(term.burmese));
+      setRegenerateDialogOpen(true);
+    } catch {
+      console.error("Failed to regenerate audio");
+    } finally {
+      setRegeneratingAudio(false);
+    }
+  }
+
   return (
-    <Card
-      className={cn(
-        "w-sm",
-        !changingQuestionLanguage &&
-          !submittingAnswer &&
-          !answerLanguage &&
-          "cursor-pointer",
-      )}
-      onClick={handleCardClick}
-    >
-      <CardHeader>
-        <CardAction>
+    <>
+      <Card
+        className={cn(
+          "w-sm",
+          !changingQuestionLanguage &&
+            !submittingAnswer &&
+            !answerLanguage &&
+            "cursor-pointer",
+        )}
+        onClick={handleCardClick}
+      >
+        <CardHeader>
+          <CardAction>
+            <Button
+              disabled={
+                changingQuestionLanguage ||
+                audioLoading ||
+                regeneratingAudio ||
+                Boolean(submittingAnswer)
+              }
+              variant="secondary"
+              className={
+                !changingQuestionLanguage && language === "burmese"
+                  ? "cursor-pointer"
+                  : "pointer-events-none invisible"
+              }
+              onClick={handleListenButtonClick}
+            >
+              {audioLoading ? <LoadingIcon /> : <Volume2Icon />}
+              Listen
+            </Button>
+
+            {!changingQuestionLanguage &&
+              !submittingAnswer &&
+              language === "burmese" &&
+              listenedTermID === term.id && (
+                <Button
+                  disabled={
+                    changingQuestionLanguage ||
+                    audioLoading ||
+                    regeneratingAudio ||
+                    Boolean(submittingAnswer)
+                  }
+                  variant="ghost"
+                  className="cursor-pointer"
+                  onClick={handleRegenerateButtonClick}
+                >
+                  {regeneratingAudio ? <LoadingIcon /> : <RefreshCwIcon />}
+                  Regenerate
+                </Button>
+              )}
+          </CardAction>
+        </CardHeader>
+
+        <CardContent className="flex min-h-16 flex-col items-center justify-center">
+          {changingQuestionLanguage ? (
+            <>
+              <Skeleton className="h-4 w-32" />
+              {language === "english" && <Skeleton className="mt-2 h-4 w-32" />}
+            </>
+          ) : language === "english" ? (
+            <p>{term.english}</p>
+          ) : (
+            <>
+              <p>{term.mlcts}</p>
+              <p>{term.burmese}</p>
+            </>
+          )}
+        </CardContent>
+
+        <CardFooter className="justify-between">
           <Button
             disabled={
               changingQuestionLanguage ||
-              Boolean(submittingAnswer) ||
-              audioLoading
+              audioLoading ||
+              regeneratingAudio ||
+              Boolean(submittingAnswer)
             }
-            variant="secondary"
+            variant="destructive"
             className={
-              !changingQuestionLanguage && language === "burmese"
+              Boolean(showAnswerButtons)
                 ? "cursor-pointer"
                 : "pointer-events-none invisible"
             }
-            onClick={handleListenButtonClick}
+            onClick={() => onAnswer(false)}
           >
-            {audioLoading ? <LoadingIcon /> : <Volume2Icon />}
-            Listen
+            {submittingAnswer === "incorrect" ? <LoadingIcon /> : <XIcon />}
+            Incorrect
           </Button>
 
-          {!changingQuestionLanguage &&
-            !submittingAnswer &&
-            language === "burmese" &&
-            listenedTermID === term.id && (
-              <AlertDialog>
-                <AlertDialogTrigger
-                  render={
-                    <Button
-                      disabled={
-                        changingQuestionLanguage ||
-                        submittingAnswer ||
-                        audioLoading
-                      }
-                      variant="ghost"
-                      className="cursor-pointer"
-                    >
-                      <RefreshCwIcon />
-                      Regenerate
-                    </Button>
-                  }
-                />
+          <Button
+            disabled={
+              changingQuestionLanguage ||
+              audioLoading ||
+              regeneratingAudio ||
+              Boolean(submittingAnswer)
+            }
+            className={
+              Boolean(showAnswerButtons)
+                ? "cursor-pointer"
+                : "pointer-events-none invisible"
+            }
+            onClick={() => onAnswer(true)}
+          >
+            {submittingAnswer === "correct" ? <LoadingIcon /> : <CheckIcon />}
+            Correct
+          </Button>
+        </CardFooter>
+      </Card>
 
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Replace Audio</AlertDialogTitle>
+      <AlertDialog
+        open={regenerateDialogOpen}
+        onOpenChange={setRegenerateDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Replace Audio</AlertDialogTitle>
 
-                    <AlertDialogDescription>
-                      Are you sure you want to replace the existing audio?
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
+            <AlertDialogDescription>
+              Are you sure you want to replace the existing audio?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
 
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="cursor-pointer">
-                      Cancel
-                    </AlertDialogCancel>
+          <ItemGroup>
+            <RegenerateDialogItem
+              title="Existing audio"
+              buttonContent="Play"
+              audioBase64={loadedAudio}
+            />
 
-                    <AlertDialogAction className="cursor-pointer">
-                      Confirm
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            )}
-        </CardAction>
-      </CardHeader>
+            <RegenerateDialogItem
+              title="New audio"
+              buttonContent="Play"
+              audioBase64={regeneratedAudio}
+            />
+          </ItemGroup>
 
-      <CardContent className="flex min-h-16 flex-col items-center justify-center">
-        {changingQuestionLanguage ? (
-          <>
-            <Skeleton className="h-4 w-32" />
-            {language === "english" && <Skeleton className="mt-2 h-4 w-32" />}
-          </>
-        ) : language === "english" ? (
-          <p>{term.english}</p>
-        ) : (
-          <>
-            <p>{term.mlcts}</p>
-            <p>{term.burmese}</p>
-          </>
-        )}
-      </CardContent>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="cursor-pointer">
+              Cancel
+            </AlertDialogCancel>
 
-      <CardFooter className="justify-between">
-        <Button
-          disabled={
-            changingQuestionLanguage ||
-            Boolean(submittingAnswer) ||
-            audioLoading
-          }
-          variant="destructive"
-          className={
-            Boolean(showAnswerButtons)
-              ? "cursor-pointer"
-              : "pointer-events-none invisible"
-          }
-          onClick={() => onAnswer(false)}
-        >
-          {submittingAnswer === "incorrect" ? <LoadingIcon /> : <XIcon />}
-          Incorrect
-        </Button>
-
-        <Button
-          disabled={
-            changingQuestionLanguage ||
-            Boolean(submittingAnswer) ||
-            audioLoading
-          }
-          className={
-            Boolean(showAnswerButtons)
-              ? "cursor-pointer"
-              : "pointer-events-none invisible"
-          }
-          onClick={() => onAnswer(true)}
-        >
-          {submittingAnswer === "correct" ? <LoadingIcon /> : <CheckIcon />}
-          Correct
-        </Button>
-      </CardFooter>
-    </Card>
+            <AlertDialogAction className="cursor-pointer">
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
