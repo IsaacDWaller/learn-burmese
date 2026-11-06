@@ -1,6 +1,17 @@
 "use client";
 
 import LoadingIcon from "@/components/loading-icon";
+import RegenerateDialogItem from "@/components/regenerate-dialog-item";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,6 +20,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import { ItemGroup } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   burmeseAudioExists,
@@ -22,18 +34,6 @@ import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
-import RegenerateDialogItem from "./regenerate-dialog-item";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "./ui/alert-dialog";
-import { ItemGroup } from "./ui/item";
 
 export default function Flashcard({
   term,
