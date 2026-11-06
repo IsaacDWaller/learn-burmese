@@ -52,7 +52,7 @@ export default function Flashcard({
   onRevealAnswer: (answerLanguage: AnswerLanguage) => void;
   onAnswer: (correct: boolean) => void;
 }) {
-  const [audioLoading, setAudioLoading] = useState(false);
+  const [loadingAudio, setLoadingAudio] = useState(false);
   const [loadedAudio, setLoadedAudio] = useState<string | null>(null);
   const [listenedTermID, setListenedTermID] = useState<number | null>(null);
 
@@ -67,7 +67,7 @@ export default function Flashcard({
     if (
       changingQuestionLanguage ||
       answerLanguage ||
-      audioLoading ||
+      loadingAudio ||
       regeneratingAudio ||
       submittingAnswer
     )
@@ -81,7 +81,7 @@ export default function Flashcard({
   ) {
     event.stopPropagation();
 
-    setAudioLoading(true);
+    setLoadingAudio(true);
 
     try {
       const audioExists = await burmeseAudioExists(term.id);
@@ -101,7 +101,7 @@ export default function Flashcard({
     } catch {
       console.error("Failed to load audio");
     } finally {
-      setAudioLoading(false);
+      setLoadingAudio(false);
     }
   }
 
@@ -139,7 +139,7 @@ export default function Flashcard({
             <Button
               disabled={
                 changingQuestionLanguage ||
-                audioLoading ||
+                loadingAudio ||
                 regeneratingAudio ||
                 Boolean(submittingAnswer)
               }
@@ -151,7 +151,7 @@ export default function Flashcard({
               }
               onClick={handleListenButtonClick}
             >
-              {audioLoading ? <LoadingIcon /> : <Volume2Icon />}
+              {loadingAudio ? <LoadingIcon /> : <Volume2Icon />}
               Listen
             </Button>
 
@@ -162,7 +162,7 @@ export default function Flashcard({
                 <Button
                   disabled={
                     changingQuestionLanguage ||
-                    audioLoading ||
+                    loadingAudio ||
                     regeneratingAudio ||
                     Boolean(submittingAnswer)
                   }
@@ -197,7 +197,7 @@ export default function Flashcard({
           <Button
             disabled={
               changingQuestionLanguage ||
-              audioLoading ||
+              loadingAudio ||
               regeneratingAudio ||
               Boolean(submittingAnswer)
             }
@@ -216,7 +216,7 @@ export default function Flashcard({
           <Button
             disabled={
               changingQuestionLanguage ||
-              audioLoading ||
+              loadingAudio ||
               regeneratingAudio ||
               Boolean(submittingAnswer)
             }
