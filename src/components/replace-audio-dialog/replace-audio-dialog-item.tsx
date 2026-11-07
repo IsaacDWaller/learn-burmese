@@ -41,7 +41,6 @@ export default function ReplaceAudioDialogItem({
         <Button
           disabled={!audioBase64 || disabled}
           variant="secondary"
-          className="cursor-pointer"
           onClick={handlePlayAudio}
         >
           <PlayIcon />

@@ -53,18 +53,11 @@ export default function ReplaceAudioDialog({
         </ItemGroup>
 
         <AlertDialogFooter>
-          <AlertDialogCancel
-            disabled={replacingAudio}
-            className="cursor-pointer"
-          >
+          <AlertDialogCancel disabled={replacingAudio}>
             Cancel
           </AlertDialogCancel>
 
-          <AlertDialogAction
-            disabled={replacingAudio}
-            className="cursor-pointer"
-            onClick={onReplaceAudio}
-          >
+          <AlertDialogAction disabled={replacingAudio} onClick={onReplaceAudio}>
             {replacingAudio ? <Spinner /> : "Confirm"}
           </AlertDialogAction>
         </AlertDialogFooter>

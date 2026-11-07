@@ -26,7 +26,7 @@ export default function FlashcardSettings({
           <ToggleGroupItem
             key={language}
             value={language}
-            className={language !== questionLanguage[0] ? "cursor-pointer" : ""}
+            className={language === questionLanguage[0] ? "cursor-default" : ""}
           >
             {language.charAt(0).toUpperCase() + language.slice(1)}
           </ToggleGroupItem>

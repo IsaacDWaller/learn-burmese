@@ -163,11 +163,10 @@ export default function Flashcard({
                 Boolean(submittingAnswer)
               }
               variant="secondary"
-              className={
-                !changingQuestionLanguage && language === "burmese"
-                  ? "cursor-pointer"
-                  : "pointer-events-none invisible"
-              }
+              className={cn(
+                (changingQuestionLanguage || language === "english") &&
+                  "pointer-events-none invisible",
+              )}
               onClick={handleListenToAudio}
             >
               {loadingAudio ? <Spinner /> : <Volume2Icon />}
@@ -186,7 +185,6 @@ export default function Flashcard({
                     Boolean(submittingAnswer)
                   }
                   variant="ghost"
-                  className="cursor-pointer"
                   onClick={handleRegenerateAudio}
                 >
                   {regeneratingAudio ? <Spinner /> : <RefreshCwIcon />}
@@ -221,11 +219,9 @@ export default function Flashcard({
               Boolean(submittingAnswer)
             }
             variant="destructive"
-            className={
-              Boolean(showAnswerButtons)
-                ? "cursor-pointer"
-                : "pointer-events-none invisible"
-            }
+            className={cn(
+              !showAnswerButtons && "pointer-events-none invisible",
+            )}
             onClick={() => onSubmitAnswer(false)}
           >
             {submittingAnswer === "incorrect" ? <Spinner /> : <XIcon />}
@@ -239,11 +235,9 @@ export default function Flashcard({
               regeneratingAudio ||
               Boolean(submittingAnswer)
             }
-            className={
-              Boolean(showAnswerButtons)
-                ? "cursor-pointer"
-                : "pointer-events-none invisible"
-            }
+            className={cn(
+              !showAnswerButtons && "pointer-events-none invisible",
+            )}
             onClick={() => onSubmitAnswer(true)}
           >
             {submittingAnswer === "correct" ? <Spinner /> : <CheckIcon />}
