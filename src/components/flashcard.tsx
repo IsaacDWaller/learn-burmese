@@ -1,16 +1,5 @@
 "use client";
 
-import RegenerateDialogItem from "@/components/regenerate-dialog-item";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +8,6 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { ItemGroup } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -34,6 +22,7 @@ import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
+import ReplaceAudioDialog from "./replace-audio-dialog";
 
 export default function Flashcard({
   term,
@@ -58,8 +47,8 @@ export default function Flashcard({
 
   const [regeneratingAudio, setRegeneratingAudio] = useState(false);
   const [regeneratedAudio, setRegeneratedAudio] = useState<string | null>(null);
-  const [regenerateDialogOpen, setRegenerateDialogOpen] = useState(false);
 
+  const [replaceAudioDialogOpen, setReplaceAudioDialogOpen] = useState(false);
   const [replacingAudio, setReplacingAudio] = useState(false);
 
   const language = answerLanguage ?? questionLanguage;
@@ -116,7 +105,7 @@ export default function Flashcard({
 
     try {
       setRegeneratedAudio(await generateAudio(term.burmese));
-      setRegenerateDialogOpen(true);
+      setReplaceAudioDialogOpen(true);
     } catch {
       console.error("Failed to regenerate audio");
     } finally {
@@ -124,12 +113,12 @@ export default function Flashcard({
     }
   }
 
-  function handleRegenerateDialogOpenChange(open: boolean) {
+  function handleReplaceAudioDialogOpenChange(open: boolean) {
     if (!open) {
       setRegeneratedAudio(null);
     }
 
-    setRegenerateDialogOpen(open);
+    setReplaceAudioDialogOpen(open);
   }
 
   async function handleReplaceAudio() {
@@ -144,7 +133,7 @@ export default function Flashcard({
       await uploadAudio(term.id, regeneratedAudio);
       setLoadedAudio(regeneratedAudio);
       setRegeneratedAudio(null);
-      setRegenerateDialogOpen(false);
+      setReplaceAudioDialogOpen(false);
     } catch {
       console.error("Failed to replace audio");
     } finally {
@@ -263,51 +252,14 @@ export default function Flashcard({
         </CardFooter>
       </Card>
 
-      <AlertDialog
-        open={regenerateDialogOpen}
-        onOpenChange={handleRegenerateDialogOpenChange}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Replace Audio</AlertDialogTitle>
-
-            <AlertDialogDescription>
-              Are you sure you want to replace the existing audio?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <ItemGroup>
-            <RegenerateDialogItem
-              title="Existing audio"
-              disabled={replacingAudio}
-              audioBase64={loadedAudio}
-            />
-
-            <RegenerateDialogItem
-              title="New audio"
-              disabled={replacingAudio}
-              audioBase64={regeneratedAudio}
-            />
-          </ItemGroup>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              disabled={replacingAudio}
-              className="cursor-pointer"
-            >
-              Cancel
-            </AlertDialogCancel>
-
-            <AlertDialogAction
-              disabled={replacingAudio}
-              className="cursor-pointer"
-              onClick={handleReplaceAudio}
-            >
-              {replacingAudio ? <Spinner /> : "Confirm"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ReplaceAudioDialog
+        open={replaceAudioDialogOpen}
+        existingAudio={loadedAudio}
+        newAudio={regeneratedAudio}
+        replacingAudio={replacingAudio}
+        onOpenChange={handleReplaceAudioDialogOpenChange}
+        onReplaceAudio={handleReplaceAudio}
+      />
     </>
   );
 }

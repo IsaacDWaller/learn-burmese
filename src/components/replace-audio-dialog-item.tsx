@@ -8,7 +8,7 @@ import {
 import { PlayIcon } from "lucide-react";
 import { useRef } from "react";
 
-export default function RegenerateDialogItem({
+export default function ReplaceAudioDialogItem({
   title,
   disabled = false,
   audioBase64,
