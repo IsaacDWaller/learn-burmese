@@ -1,5 +1,7 @@
 "use client";
 
+import SubmitAnswerButton from "@/components/flashcard/submit-answer-button";
+import ReplaceAudioDialog from "@/components/replace-audio-dialog/replace-audio-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,9 +22,16 @@ import { cn } from "@/lib/utils";
 import type { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
-import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
+import { RefreshCwIcon, Volume2Icon } from "lucide-react";
 import { useState } from "react";
-import ReplaceAudioDialog from "../replace-audio-dialog/replace-audio-dialog";
+
+const ANSWER_BUTTONS: {
+  answer: "correct" | "incorrect";
+  variant: "default" | "destructive";
+}[] = [
+  { answer: "incorrect", variant: "destructive" },
+  { answer: "correct", variant: "default" },
+];
 
 export default function Flashcard({
   term,
@@ -52,7 +61,15 @@ export default function Flashcard({
   const [replacingAudio, setReplacingAudio] = useState(false);
 
   const language = answerLanguage ?? questionLanguage;
-  const showAnswerButtons = !changingQuestionLanguage && answerLanguage;
+
+  const showAnswerButtons =
+    !changingQuestionLanguage && Boolean(answerLanguage);
+
+  const disableAnswerButtons =
+    changingQuestionLanguage ||
+    loadingAudio ||
+    regeneratingAudio ||
+    Boolean(submittingAnswer);
 
   function handleRevealAnswer() {
     if (
@@ -211,38 +228,17 @@ export default function Flashcard({
         </CardContent>
 
         <CardFooter className="justify-between">
-          <Button
-            disabled={
-              changingQuestionLanguage ||
-              loadingAudio ||
-              regeneratingAudio ||
-              Boolean(submittingAnswer)
-            }
-            variant="destructive"
-            className={cn(
-              !showAnswerButtons && "pointer-events-none invisible",
-            )}
-            onClick={() => onSubmitAnswer(false)}
-          >
-            {submittingAnswer === "incorrect" ? <Spinner /> : <XIcon />}
-            Incorrect
-          </Button>
-
-          <Button
-            disabled={
-              changingQuestionLanguage ||
-              loadingAudio ||
-              regeneratingAudio ||
-              Boolean(submittingAnswer)
-            }
-            className={cn(
-              !showAnswerButtons && "pointer-events-none invisible",
-            )}
-            onClick={() => onSubmitAnswer(true)}
-          >
-            {submittingAnswer === "correct" ? <Spinner /> : <CheckIcon />}
-            Correct
-          </Button>
+          {ANSWER_BUTTONS.map(({ answer, variant }) => (
+            <SubmitAnswerButton
+              key={answer}
+              visible={showAnswerButtons}
+              answer={answer}
+              submittingAnswer={submittingAnswer}
+              onSubmitAnswer={onSubmitAnswer}
+              disabled={disableAnswerButtons}
+              variant={variant}
+            />
+          ))}
         </CardFooter>
       </Card>
 
