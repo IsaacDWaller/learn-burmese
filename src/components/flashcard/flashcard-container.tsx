@@ -75,7 +75,7 @@ export default function FlashcardContainer({
         changingQuestionLanguage={changingQuestionLanguage}
         submittingAnswer={submittingAnswer}
         onRevealAnswer={setAnswerLanguage}
-        onAnswer={handleSubmitAnswer}
+        onSubmitAnswer={handleSubmitAnswer}
       />
     </div>
   );

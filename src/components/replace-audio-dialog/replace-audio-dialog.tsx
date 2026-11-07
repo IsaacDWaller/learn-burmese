@@ -17,18 +17,18 @@ export default function ReplaceAudioDialog({
   existingAudio,
   newAudio,
   replacingAudio,
-  onOpenChange,
+  onToggle,
   onReplaceAudio,
 }: {
   open: boolean;
   existingAudio: string | null;
   newAudio: string | null;
   replacingAudio: boolean;
-  onOpenChange: (open: boolean) => void;
+  onToggle: (open: boolean) => void;
   onReplaceAudio: () => void;
 }) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={onToggle}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Replace Audio</AlertDialogTitle>

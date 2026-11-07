@@ -19,7 +19,7 @@ export default function ReplaceAudioDialogItem({
 }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  async function handlePlayButtonClick() {
+  async function handlePlayAudio() {
     try {
       if (!audioRef.current) {
         audioRef.current = new Audio(`data:audio/wav;base64,${audioBase64}`);
@@ -42,7 +42,7 @@ export default function ReplaceAudioDialogItem({
           disabled={!audioBase64 || disabled}
           variant="secondary"
           className="cursor-pointer"
-          onClick={handlePlayButtonClick}
+          onClick={handlePlayAudio}
         >
           <PlayIcon />
           Play

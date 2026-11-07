@@ -31,7 +31,7 @@ export default function Flashcard({
   changingQuestionLanguage,
   submittingAnswer,
   onRevealAnswer,
-  onAnswer,
+  onSubmitAnswer,
 }: {
   term: Term;
   questionLanguage: string;
@@ -39,7 +39,7 @@ export default function Flashcard({
   changingQuestionLanguage: boolean;
   submittingAnswer: Answer;
   onRevealAnswer: (answerLanguage: AnswerLanguage) => void;
-  onAnswer: (correct: boolean) => void;
+  onSubmitAnswer: (correct: boolean) => void;
 }) {
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [loadedAudio, setLoadedAudio] = useState<string | null>(null);
@@ -54,7 +54,7 @@ export default function Flashcard({
   const language = answerLanguage ?? questionLanguage;
   const showAnswerButtons = !changingQuestionLanguage && answerLanguage;
 
-  function handleCardClick() {
+  function handleRevealAnswer() {
     if (
       changingQuestionLanguage ||
       answerLanguage ||
@@ -67,7 +67,7 @@ export default function Flashcard({
     onRevealAnswer(questionLanguage === "english" ? "burmese" : "english");
   }
 
-  async function handleListenButtonClick(
+  async function handleListenToAudio(
     event: React.MouseEvent<HTMLButtonElement>,
   ) {
     event.stopPropagation();
@@ -96,7 +96,7 @@ export default function Flashcard({
     }
   }
 
-  async function handleRegenerateButtonClick(
+  async function handleRegenerateAudio(
     event: React.MouseEvent<HTMLButtonElement>,
   ) {
     event.stopPropagation();
@@ -113,7 +113,7 @@ export default function Flashcard({
     }
   }
 
-  function handleReplaceAudioDialogOpenChange(open: boolean) {
+  function handleReplaceAudioDialogToggle(open: boolean) {
     if (!open) {
       setRegeneratedAudio(null);
     }
@@ -151,7 +151,7 @@ export default function Flashcard({
             !answerLanguage &&
             "cursor-pointer",
         )}
-        onClick={handleCardClick}
+        onClick={handleRevealAnswer}
       >
         <CardHeader>
           <CardAction>
@@ -168,7 +168,7 @@ export default function Flashcard({
                   ? "cursor-pointer"
                   : "pointer-events-none invisible"
               }
-              onClick={handleListenButtonClick}
+              onClick={handleListenToAudio}
             >
               {loadingAudio ? <Spinner /> : <Volume2Icon />}
               Listen
@@ -187,7 +187,7 @@ export default function Flashcard({
                   }
                   variant="ghost"
                   className="cursor-pointer"
-                  onClick={handleRegenerateButtonClick}
+                  onClick={handleRegenerateAudio}
                 >
                   {regeneratingAudio ? <Spinner /> : <RefreshCwIcon />}
                   Regenerate
@@ -226,7 +226,7 @@ export default function Flashcard({
                 ? "cursor-pointer"
                 : "pointer-events-none invisible"
             }
-            onClick={() => onAnswer(false)}
+            onClick={() => onSubmitAnswer(false)}
           >
             {submittingAnswer === "incorrect" ? <Spinner /> : <XIcon />}
             Incorrect
@@ -244,7 +244,7 @@ export default function Flashcard({
                 ? "cursor-pointer"
                 : "pointer-events-none invisible"
             }
-            onClick={() => onAnswer(true)}
+            onClick={() => onSubmitAnswer(true)}
           >
             {submittingAnswer === "correct" ? <Spinner /> : <CheckIcon />}
             Correct
@@ -257,7 +257,7 @@ export default function Flashcard({
         existingAudio={loadedAudio}
         newAudio={regeneratedAudio}
         replacingAudio={replacingAudio}
-        onOpenChange={handleReplaceAudioDialogOpenChange}
+        onToggle={handleReplaceAudioDialogToggle}
         onReplaceAudio={handleReplaceAudio}
       />
     </>
