@@ -60,6 +60,8 @@ export default function Flashcard({
   const [regeneratedAudio, setRegeneratedAudio] = useState<string | null>(null);
   const [regenerateDialogOpen, setRegenerateDialogOpen] = useState(false);
 
+  const [replacingAudio, setReplacingAudio] = useState(false);
+
   const language = answerLanguage ?? questionLanguage;
   const showAnswerButtons = !changingQuestionLanguage && answerLanguage;
 
@@ -113,12 +115,40 @@ export default function Flashcard({
     setRegeneratingAudio(true);
 
     try {
-      // setRegeneratedAudio(await generateBurmeseAudio(term.burmese));
+      setRegeneratedAudio(await generateAudio(term.burmese));
       setRegenerateDialogOpen(true);
     } catch {
       console.error("Failed to regenerate audio");
     } finally {
       setRegeneratingAudio(false);
+    }
+  }
+
+  function handleRegenerateDialogOpenChange(open: boolean) {
+    if (!open) {
+      setRegeneratedAudio(null);
+    }
+
+    setRegenerateDialogOpen(open);
+  }
+
+  async function handleReplaceAudio() {
+    if (!regeneratedAudio) {
+      console.error("Failed to replace audio");
+      return;
+    }
+
+    setReplacingAudio(true);
+
+    try {
+      await uploadAudio(term.id, regeneratedAudio);
+      setLoadedAudio(regeneratedAudio);
+      setRegeneratedAudio(null);
+      setRegenerateDialogOpen(false);
+    } catch {
+      console.error("Failed to replace audio");
+    } finally {
+      setReplacingAudio(false);
     }
   }
 
@@ -235,7 +265,7 @@ export default function Flashcard({
 
       <AlertDialog
         open={regenerateDialogOpen}
-        onOpenChange={setRegenerateDialogOpen}
+        onOpenChange={handleRegenerateDialogOpenChange}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -251,22 +281,31 @@ export default function Flashcard({
               title="Existing audio"
               buttonContent="Play"
               audioBase64={loadedAudio}
+              replacingAudio={replacingAudio}
             />
 
             <RegenerateDialogItem
               title="New audio"
               buttonContent="Play"
               audioBase64={regeneratedAudio}
+              replacingAudio={replacingAudio}
             />
           </ItemGroup>
 
           <AlertDialogFooter>
-            <AlertDialogCancel className="cursor-pointer">
+            <AlertDialogCancel
+              disabled={replacingAudio}
+              className="cursor-pointer"
+            >
               Cancel
             </AlertDialogCancel>
 
-            <AlertDialogAction className="cursor-pointer">
-              Confirm
+            <AlertDialogAction
+              disabled={replacingAudio}
+              className="cursor-pointer"
+              onClick={handleReplaceAudio}
+            >
+              {replacingAudio ? <Spinner /> : "Confirm"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
