@@ -1,6 +1,5 @@
 "use client";
 
-import SubmitAnswerButton from "@/components/flashcard/submit-answer-button";
 import ReplaceAudioDialog from "@/components/replace-audio-dialog/replace-audio-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,16 +21,8 @@ import { cn } from "@/lib/utils";
 import type { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
-import { RefreshCwIcon, Volume2Icon } from "lucide-react";
+import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
-
-const ANSWER_BUTTONS: {
-  answer: "correct" | "incorrect";
-  variant: "default" | "destructive";
-}[] = [
-  { answer: "incorrect", variant: "destructive" },
-  { answer: "correct", variant: "default" },
-];
 
 export default function Flashcard({
   term,
@@ -228,17 +219,28 @@ export default function Flashcard({
         </CardContent>
 
         <CardFooter className="justify-between">
-          {ANSWER_BUTTONS.map(({ answer, variant }) => (
-            <SubmitAnswerButton
-              key={answer}
-              visible={showAnswerButtons}
-              answer={answer}
-              submittingAnswer={submittingAnswer}
-              onSubmitAnswer={onSubmitAnswer}
-              disabled={disableAnswerButtons}
-              variant={variant}
-            />
-          ))}
+          <Button
+            className={cn(
+              !showAnswerButtons && "pointer-events-none invisible",
+            )}
+            variant="destructive"
+            disabled={disableAnswerButtons}
+            onClick={() => onSubmitAnswer(false)}
+          >
+            {submittingAnswer === "incorrect" ? <Spinner /> : <XIcon />}
+            Incorrect
+          </Button>
+
+          <Button
+            className={cn(
+              !showAnswerButtons && "pointer-events-none invisible",
+            )}
+            disabled={disableAnswerButtons}
+            onClick={() => onSubmitAnswer(true)}
+          >
+            {submittingAnswer === "correct" ? <Spinner /> : <CheckIcon />}
+            Correct
+          </Button>
         </CardFooter>
       </Card>
 
