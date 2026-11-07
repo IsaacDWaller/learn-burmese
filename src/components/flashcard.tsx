@@ -279,16 +279,14 @@ export default function Flashcard({
           <ItemGroup>
             <RegenerateDialogItem
               title="Existing audio"
-              buttonContent="Play"
+              disabled={replacingAudio}
               audioBase64={loadedAudio}
-              replacingAudio={replacingAudio}
             />
 
             <RegenerateDialogItem
               title="New audio"
-              buttonContent="Play"
+              disabled={replacingAudio}
               audioBase64={regeneratedAudio}
-              replacingAudio={replacingAudio}
             />
           </ItemGroup>
 

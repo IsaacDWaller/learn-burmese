@@ -6,21 +6,29 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { PlayIcon } from "lucide-react";
+import { useRef } from "react";
 
 export default function RegenerateDialogItem({
   title,
-  buttonContent,
+  disabled = false,
   audioBase64,
-  replacingAudio,
 }: {
   title: string;
-  buttonContent: string;
+  disabled?: boolean;
   audioBase64: string | null;
-  replacingAudio: boolean;
 }) {
-  function handlePlayButtonClick() {
-    if (!audioBase64) return;
-    new Audio(`data:audio/mp3;base64,${audioBase64}`).play();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  async function handlePlayButtonClick() {
+    try {
+      if (!audioRef.current) {
+        audioRef.current = new Audio(`data:audio/wav;base64,${audioBase64}`);
+      }
+
+      await audioRef.current.play();
+    } catch {
+      console.error("Failed to play audio");
+    }
   }
 
   return (
@@ -31,13 +39,13 @@ export default function RegenerateDialogItem({
 
       <ItemActions>
         <Button
-          disabled={!audioBase64 || replacingAudio}
+          disabled={!audioBase64 || disabled}
           variant="secondary"
           className="cursor-pointer"
           onClick={handlePlayButtonClick}
         >
           <PlayIcon />
-          {buttonContent}
+          Play
         </Button>
       </ItemActions>
     </Item>
