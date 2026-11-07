@@ -1,4 +1,4 @@
-import ReplaceAudioDialogItem from "@/components/replace-audio-dialog-item";
+import ReplaceAudioDialogItem from "@/components/replace-audio-dialog/replace-audio-dialog-item";
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,6 +1,6 @@
 "use client";
 
-import { NavLink } from "@/components/nav-link";
+import { NavLink } from "@/components/nav/nav-link";
 import {
   SidebarGroup,
   SidebarGroupContent,

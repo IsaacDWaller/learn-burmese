@@ -1,7 +1,7 @@
 "use client";
 
-import Flashcard from "@/components/flashcard";
-import FlashcardSettings from "@/components/flashcard-settings";
+import Flashcard from "@/components/flashcard/flashcard";
+import FlashcardSettings from "@/components/flashcard/flashcard-settings";
 import { createAnswer, getRandomTerm } from "@/lib/flashcard-actions";
 import { Answer } from "@/types/answer";
 import { AnswerLanguage } from "@/types/answer-language";

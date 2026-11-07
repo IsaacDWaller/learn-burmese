@@ -1,8 +1,8 @@
 "use client";
 
-import { NavLink } from "@/components/nav-link";
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
+import { NavLink } from "@/components/nav/nav-link";
+import { NavMain } from "@/components/nav/nav-main";
+import { NavSecondary } from "@/components/nav/nav-secondary";
 import {
   Sidebar,
   SidebarContent,

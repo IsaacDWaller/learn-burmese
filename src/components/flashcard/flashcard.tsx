@@ -22,7 +22,7 @@ import { AnswerLanguage } from "@/types/answer-language";
 import { Term } from "@/types/term";
 import { CheckIcon, RefreshCwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useState } from "react";
-import ReplaceAudioDialog from "./replace-audio-dialog";
+import ReplaceAudioDialog from "../replace-audio-dialog/replace-audio-dialog";
 
 export default function Flashcard({
   term,
