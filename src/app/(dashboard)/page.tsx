@@ -3,7 +3,7 @@ import { getRandomTerm } from "@/lib/flashcard-actions";
 
 export default async function Page() {
   return (
-    <main>
+    <main className="mt-6">
       <FlashcardContainer initialTerm={await getRandomTerm()} />
     </main>
   );

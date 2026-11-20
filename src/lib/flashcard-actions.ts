@@ -10,10 +10,7 @@ export async function getRandomTerm() {
     .select("id, english, mlcts, burmese")
     .single();
 
-  if (error) {
-    throw new Error("Failed to get term");
-  }
-
+  if (error) throw error;
   return data;
 }
 
@@ -24,16 +21,13 @@ export async function createAnswer(
 ) {
   const supabase = await createClient();
 
-  const { error } = await supabase.from("answers").insert({
+  const { data, error } = await supabase.from("answers").insert({
     user_id: process.env.USER_ID,
     term_id: termId,
     correct: correct,
     answer_time_ms: answerTimeMs,
   });
 
-  if (error) {
-    throw new Error("Failed to create answer");
-  }
-
-  return error;
+  if (error) throw error;
+  return data;
 }

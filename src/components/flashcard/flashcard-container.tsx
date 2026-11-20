@@ -37,8 +37,8 @@ export default function FlashcardContainer({
 
     try {
       setTerm(await getRandomTerm());
-    } catch {
-      console.error("Failed to get term");
+    } catch (error) {
+      console.error(error);
     } finally {
       setChangingQuestionLanguage(false);
     }
@@ -53,8 +53,8 @@ export default function FlashcardContainer({
     try {
       await createAnswer(term.id, correct, Date.now() - questionAt.current);
       setTerm(await getRandomTerm());
-    } catch {
-      console.error("Failed to submit answer");
+    } catch (error) {
+      console.error(error);
     } finally {
       setSubmittingAnswer(null);
     }
