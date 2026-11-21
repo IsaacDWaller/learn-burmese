@@ -24,9 +24,9 @@ export function NavSecondary({
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   const router = useRouter();
-  const supabase = createClient();
 
   async function handleLogout() {
+    const supabase = createClient();
     const { error } = await supabase.auth.signOut();
 
     if (error) {
