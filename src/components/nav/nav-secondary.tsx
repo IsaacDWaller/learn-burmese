@@ -26,7 +26,7 @@ export function NavSecondary({
   const router = useRouter();
   const supabase = createClient();
 
-  async function handleSignout() {
+  async function handleLogout() {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
@@ -51,9 +51,9 @@ export function NavSecondary({
           ))}
 
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleSignout}>
+            <SidebarMenuButton onClick={handleLogout}>
               <LogOutIcon />
-              <span>Sign out</span>
+              <span>Log out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

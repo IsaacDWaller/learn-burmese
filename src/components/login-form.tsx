@@ -92,7 +92,7 @@ export function LoginForm({
                       {...field}
                       id="email-address"
                       aria-invalid={fieldState.invalid}
-                      placeholder="m@example.com"
+                      placeholder="john.doe@example.com"
                       type="email"
                     />
 
@@ -114,6 +114,7 @@ export function LoginForm({
                       {...field}
                       id="password"
                       aria-invalid={fieldState.invalid}
+                      placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
                       type="password"
                     />
 
