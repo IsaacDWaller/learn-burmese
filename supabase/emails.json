@@ -1,0 +1,6 @@
+{
+  "confirmSignUp": {
+    "subject": "Confirm your email address",
+    "file": "confirm-sign-up.html"
+  }
+}
