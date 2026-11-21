@@ -8,6 +8,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { createClient } from "@/lib/supabase/client";
+import { LogOutIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 export function NavSecondary({
@@ -20,6 +23,20 @@ export function NavSecondary({
     icon: React.ReactNode;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const router = useRouter();
+  const supabase = createClient();
+
+  async function handleSignout() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    router.replace("/login");
+  }
+
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
@@ -32,6 +49,13 @@ export function NavSecondary({
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
+
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={handleSignout}>
+              <LogOutIcon />
+              <span>Sign out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

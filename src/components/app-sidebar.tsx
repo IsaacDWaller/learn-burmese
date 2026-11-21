@@ -15,7 +15,6 @@ import {
   BrainIcon,
   ChartColumnIcon,
   CopyIcon,
-  LogOutIcon,
   Settings2Icon,
   SettingsIcon,
 } from "lucide-react";
@@ -30,25 +29,20 @@ const data = {
     },
     {
       title: "Statistics",
-      url: "statistics",
+      url: "/statistics",
       icon: <ChartColumnIcon />,
     },
   ],
   navSecondary: [
     {
       title: "Account",
-      url: "account",
+      url: "/account",
       icon: <Settings2Icon />,
     },
     {
       title: "Settings",
-      url: "settings",
+      url: "/settings",
       icon: <SettingsIcon />,
-    },
-    {
-      title: "Sign Out",
-      url: "sign-out",
-      icon: <LogOutIcon />,
     },
   ],
 };
